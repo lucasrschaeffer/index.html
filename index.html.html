@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pathfinders NYC — Youth Volunteer Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Primary: baby blue — soft, friendly, optimistic */
+    --saffron: #7BB3D9;
+    --saffron-light: #E6F1F8;
+    --saffron-dark: #4A8AB5;
+    /* Secondary: warm peach — adds warmth so it isn't cold */
+    --coral: #F5B89E;
+    --coral-light: #FCEBE0;
+    /* Tertiary: butter yellow — sunny accent */
+    --sky: #F5D89E;
+    --sky-light: #FBF1DB;
+    /* Neutrals: warm cream + soft navy */
+    --ink: #2C3A48;
+    --ink-mid: #4A5968;
+    --ash: #F7F4EE;
+    --ash-mid: #EDE5D8;
+    --stone: #9CA7B0;
+    --white: #FDFAF4;
+    --red: #E07B6F;
+    --green: #8FB87E;
+    --green-light: #EAF2E4;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Anchor scroll offset so links don't hide under fixed nav */
+  section[id] { scroll-margin-top: 80px; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 64px;
+    background: var(--ink);
+    border-bottom: 2px solid var(--saffron);
+  }
+
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.45rem;
+    letter-spacing: -0.01em;
+    color: var(--saffron);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--white); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--saffron); }
+
+  .nav-cta {
+    background: var(--saffron) !important;
+    color: var(--white) !important;
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 2px !important;
+    font-weight: 700 !important;
+  }
+
+  .nav-cta:hover { background: var(--saffron-dark) !important; color: var(--white) !important; }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2C3A48 0%, #3F5266 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #home::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,179,217,0.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(123,179,217,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,179,217,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem 3rem 5rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--saffron);
+  }
+
+  .hero-h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--saffron);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--ash-mid);
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-sub strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--saffron);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover { background: var(--saffron-dark); color: var(--white); transform: translateY(-1px); }
+
+  .btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--white);
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 2px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-outline:hover { border-color: var(--saffron); color: var(--saffron); }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .hero-stat-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2.1rem;
+    color: var(--saffron);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-top: 0.25rem;
+  }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-map-art {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .photo-collage {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 520px;
+  }
+
+  .collage-photo {
+    position: absolute;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.3);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    background: var(--white);
+  }
+
+  .collage-photo:hover {
+    transform: rotate(0deg) translateY(-6px) !important;
+    box-shadow: 0 22px 60px rgba(0,0,0,0.35);
+  }
+
+  .collage-main {
+    width: 280px;
+    height: 360px;
+    left: 20px;
+    top: 30px;
+    transform: rotate(-3deg);
+    z-index: 1;
+  }
+
+  .collage-small1 {
+    width: 170px;
+    height: 170px;
+    right: 0;
+    top: 60px;
+    transform: rotate(5deg);
+    z-index: 2;
+  }
+
+  .collage-small2 {
+    width: 170px;
+    height: 170px;
+    right: 15px;
+    bottom: 30px;
+    transform: rotate(-4deg);
+    z-index: 2;
+  }
+
+  .collage-photo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .art-caption {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink-mid);
+    background: rgba(255,255,255,0.95);
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+    text-align: center;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 6rem 4rem; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--saffron);
+  }
+
+  .section-h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── PERKS ── */
+  #perks {
+    background: var(--ash);
+    padding: 6rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #perks::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: var(--saffron-light);
+    opacity: 0.7;
+    z-index: 0;
+  }
+
+  #perks::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: var(--coral-light);
+    opacity: 0.8;
+    z-index: 0;
+  }
+
+  .perks-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .perks-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .perks-header .section-label {
+    justify-content: center;
+    display: inline-flex;
+  }
+
+  .perks-sub {
+    font-size: 1.1rem;
+    color: var(--ink-mid);
+    max-width: 540px;
+    margin: 1rem auto 0;
+    line-height: 1.6;
+  }
+
+  .perks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .perk-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid var(--ash-mid);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .perk-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  }
+
+  .perk-1:hover { border-color: var(--saffron); }
+  .perk-2:hover { border-color: var(--coral); }
+  .perk-3:hover { border-color: var(--sky); }
+  .perk-4:hover { border-color: var(--saffron); }
+  .perk-5:hover { border-color: var(--coral); }
+  .perk-6:hover { border-color: var(--sky); }
+
+  .perk-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    background: var(--saffron-light);
+    border-radius: 12px;
+  }
+
+  .perk-2 .perk-icon { background: var(--coral-light); }
+  .perk-3 .perk-icon { background: var(--sky-light); }
+  .perk-4 .perk-icon { background: var(--saffron-light); }
+  .perk-5 .perk-icon { background: var(--coral-light); }
+  .perk-6 .perk-icon { background: var(--sky-light); }
+
+  .perk-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.22rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .perk-card p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+  }
+
+  .perks-cta {
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .perks-cta p {
+    font-size: 0.9rem;
+    color: var(--stone);
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 800px) {
+    .perks-grid { grid-template-columns: 1fr; }
+    #perks { padding: 4rem 1.5rem; }
+  }
+
+  /* ── IN ACTION GALLERY ── */
+  #in-action {
+    background: var(--white);
+    padding: 6rem 4rem;
+  }
+
+  .action-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .action-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .action-header .section-label {
+    justify-content: center;
+    display: inline-flex;
+  }
+
+  .action-sub {
+    font-size: 1.05rem;
+    color: var(--ink-mid);
+    max-width: 580px;
+    margin: 1rem auto 0;
+    line-height: 1.7;
+  }
+
+  .action-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem 2rem;
+  }
+
+  .gallery-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .gallery-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: var(--ash);
+    box-shadow: 0 8px 24px rgba(44,58,72,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .gallery-photo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(44,58,72,0.14);
+  }
+
+  .gallery-photo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .gallery-label {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(255,255,255,0.94);
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: var(--ink-mid);
+    letter-spacing: 0.04em;
+  }
+
+  .gallery-caption h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .gallery-caption p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+  }
+
+  .gallery-note {
+    margin-top: 3rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--saffron-light);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+    text-align: center;
+    border: 1px solid rgba(123,179,217,0.25);
+  }
+
+  .gallery-note strong { color: var(--saffron-dark); }
+
+  .gallery-note a {
+    color: var(--saffron-dark);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @media (max-width: 800px) {
+    #in-action { padding: 4rem 1.5rem; }
+    .action-gallery { grid-template-columns: 1fr; }
+  }
+
+  /* ── MISSION ── */
+  #mission {
+    background: var(--white);
+    padding: 6rem 4rem;
+  }
+
+  .mission-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    margin-top: 3rem;
+  }
+
+  .mission-text p {
+    color: var(--ink-mid);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+
+  .mission-text p strong { color: var(--ink); font-weight: 600; }
+
+  .mission-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .mission-card {
+    padding: 1.75rem;
+    border-left: 4px solid var(--saffron);
+    background: var(--ash);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .mission-cards .mission-card:nth-child(2) {
+    border-left-color: var(--coral);
+  }
+
+  .mission-cards .mission-card:nth-child(3) {
+    border-left-color: var(--sky);
+  }
+
+  .mission-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .mission-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.28rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .mission-card p {
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+
+  /* ── RESEARCH CALLOUT ── */
+  .research-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background: var(--blue-light, var(--saffron-light));
+    border-left: 4px solid var(--saffron);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .research-stat {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 3rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--saffron-dark);
+    flex-shrink: 0;
+  }
+
+  .research-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+  }
+
+  .research-text strong {
+    color: var(--ink);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .research-source {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--stone);
+    font-style: italic;
+  }
+
+  /* ── HOW IT WORKS ── */
+  #model {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .model-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .model-inner .section-label { color: var(--saffron); }
+  .model-inner .section-h2 { color: var(--white); }
+
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    margin-top: 3.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .step {
+    padding: 2.5rem;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+  }
+
+  .step:last-child { border-right: none; }
+
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 3.8rem;
+    line-height: 1;
+    color: rgba(123,179,217,0.35);
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .step-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    background: rgba(123,179,217,0.15);
+    padding: 0.3rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1.25rem;
+  }
+
+  .step h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.55rem;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  .step p {
+    font-size: 0.92rem;
+    color: var(--stone);
+    line-height: 1.7;
+  }
+
+  .step-details {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .step-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--ash-mid);
+  }
+
+  .step-detail::before {
+    content: '→';
+    color: var(--saffron);
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* ── VOLUNTEER ── */
+  #volunteer {
+    background: var(--ash);
+  }
+
+  .volunteer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .volunteer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+  }
+
+  .volunteer-left h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .volunteer-left p {
+    color: var(--ink-mid);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+  }
+
+  .trust-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--white);
+    border: 1px solid var(--ash-mid);
+    border-radius: 4px;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .signup-form-card {
+    background: var(--white);
+    border: 1px solid var(--ash-mid);
+    border-radius: 6px;
+    padding: 2.25rem;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+  }
+
+  .signup-form-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .signup-form-card p.form-sub {
+    font-size: 0.85rem;
+    color: var(--stone);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .signup-iframe {
+    display: block;
+    width: 100%;
+    height: 1841px;
+    border: none;
+    border-radius: 4px;
+    background: var(--ash);
+  }
+
+  .iframe-fallback {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--stone);
+    margin-top: 1rem;
+  }
+
+  .iframe-fallback a {
+    color: var(--saffron-dark);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 500;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+  }
+
+  .form-group input,
+  .form-group select {
+    border: 1px solid var(--ash-mid);
+    border-radius: 3px;
+    padding: 0.65rem 0.85rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus { border-color: var(--saffron); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.82rem;
+    color: var(--stone);
+    line-height: 1.5;
+  }
+
+  .checkbox-group input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: var(--saffron); }
+
+  .btn-full {
+    width: 100%;
+    display: block;
+    text-align: center;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 1rem;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-full:hover { background: var(--saffron); color: var(--ink); }
+
+  /* ── COHORT LEADERS ── */
+  #lead {
+    background: var(--coral-light);
+    padding: 6rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #lead::before {
+    content: '';
+    position: absolute;
+    top: 4rem;
+    right: -6rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 50%;
+    background: var(--butter-light, var(--sky-light));
+    opacity: 0.5;
+  }
+
+  #lead::after {
+    content: '';
+    position: absolute;
+    bottom: -4rem;
+    left: -4rem;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 50%;
+    background: var(--saffron-light);
+    opacity: 0.5;
+  }
+
+  .lead-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .lead-header {
+    margin-bottom: 3rem;
+    max-width: 720px;
+  }
+
+  .lead-sub {
+    font-size: 1.05rem;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    margin-top: 0.5rem;
+  }
+
+  .lead-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .lead-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .lead-section-title::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--saffron);
+  }
+
+  .lead-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .lead-checklist li {
+    padding: 0.85rem 0 0.85rem 2rem;
+    border-bottom: 1px solid rgba(74,89,104,0.15);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+    position: relative;
+  }
+
+  .lead-checklist li:last-child { border-bottom: none; }
+
+  .lead-checklist li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    top: 0.85rem;
+    color: var(--saffron-dark);
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .lead-checklist li strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .lead-mentor-note {
+    margin-top: 1.5rem;
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+    border-left: 3px solid var(--saffron);
+  }
+
+  .lead-mentor-note strong { color: var(--ink); font-weight: 600; }
+
+  .mentor-note-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--saffron-dark);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .lead-perks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lead-perk {
+    background: var(--white);
+    padding: 1.25rem;
+    border-radius: 10px;
+    border: 1px solid rgba(74,89,104,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .lead-perk:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(44,58,72,0.08);
+  }
+
+  .lead-perk-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .lead-perk h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.35rem;
+  }
+
+  .lead-perk p {
+    font-size: 0.85rem;
+    color: var(--ink-mid);
+    line-height: 1.55;
+  }
+
+  .lead-commit {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.1rem 1.4rem;
+    border: 1px dashed rgba(74,138,181,0.4);
+  }
+
+  .commit-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+
+  .commit-text {
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+    line-height: 1.55;
+  }
+
+  .lead-left,
+  .lead-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .lead-cta-text h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.7rem;
+    letter-spacing: -0.015em;
+    color: var(--saffron);
+    margin-bottom: 0.5rem;
+  }
+
+  .lead-cta-text p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--ash);
+    max-width: 38rem;
+  }
+
+  .lead-cta {
+    background: var(--ink);
+    color: var(--white);
+    border-radius: 14px;
+    padding: 2rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .lead-cta-text h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+    color: var(--saffron);
+    margin-bottom: 0.5rem;
+  }
+
+  .lead-cta-text p {
+    font-size: 0.95rem;
+    color: var(--ash-mid);
+    line-height: 1.65;
+    max-width: 540px;
+  }
+
+  .lead-apply-btn {
+    display: inline-block;
+    background: var(--saffron);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 1.1rem 2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+  }
+
+  .lead-apply-btn:hover {
+    background: var(--white);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 800px) {
+    #lead { padding: 4rem 1.5rem; }
+    .lead-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .lead-perks-grid { grid-template-columns: 1fr; }
+    .lead-cta { grid-template-columns: 1fr; padding: 1.5rem; }
+  }
+
+  /* ── DONATE ── */
+  #donate {
+    background: var(--saffron-light);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .donate-bg-text {
+    position: absolute;
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 13rem;
+    line-height: 1;
+    color: rgba(74,138,181,0.16);
+    top: 1rem;
+    right: 1rem;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.02em;
+  }
+
+  .donate-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .donate-inner .section-label { color: var(--saffron-dark); }
+  .donate-inner .section-label::before { background: var(--saffron); }
+  .donate-inner .section-h2 { color: var(--ink); }
+
+  .donate-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    margin-top: 2rem;
+  }
+
+  .donate-left p {
+    font-size: 1rem;
+    color: var(--ink-mid);
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+  }
+
+  .kit-breakdown {
+    background: rgba(255,255,255,0.65);
+    border: 1px solid rgba(123,179,217,0.15);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .kit-breakdown h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    margin-bottom: 1rem;
+  }
+
+  .kit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(123,179,217,0.12);
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+  }
+
+  .kit-item:last-child { border-bottom: none; }
+  .kit-item-cost { font-weight: 600; color: var(--ink); }
+
+  .donate-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .donate-option {
+    background: var(--white);
+    border: 2px solid transparent;
+    border-radius: 6px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    text-decoration: none;
+    display: block;
+  }
+
+  .donate-option:hover { border-color: var(--ink); transform: translateY(-2px); }
+
+  .donate-option.featured { border-color: var(--ink); }
+
+  .donate-option-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .donate-amount {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.95rem;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .donate-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    background: var(--saffron-light);
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+  }
+
+  .donate-desc {
+    font-size: 0.88rem;
+    color: var(--stone);
+    line-height: 1.5;
+  }
+
+  .donate-cta-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .btn-dark {
+    display: inline-block;
+    background: var(--saffron);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .btn-dark:hover { background: var(--saffron-dark); }
+
+  .donate-callout {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--ink);
+    color: var(--white);
+    border-radius: 6px;
+    padding: 1.5rem 1.75rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .donate-callout-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--saffron);
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .donate-callout-text {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--ash-mid);
+  }
+
+  .donate-callout-text strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  /* ── FAQ ── */
+  #faq {
+    background: var(--ash);
+    padding: 6rem 4rem;
+  }
+
+  .faq-inner { max-width: 1100px; margin: 0 auto; }
+
+  .faq-header { text-align: center; margin-bottom: 3.5rem; }
+
+  .faq-sub {
+    font-size: 1.05rem;
+    color: var(--stone);
+    margin-top: 0.75rem;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 3.5rem;
+    align-items: start;
+  }
+
+  .faq-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .faq-category-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    margin-bottom: 0.2rem;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .faq-category-label::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--saffron);
+    flex-shrink: 0;
+  }
+
+  .faq-item {
+    border-radius: 8px;
+    background: var(--white);
+    border: 1.5px solid var(--ash-mid);
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: var(--saffron);
+    box-shadow: 0 4px 20px rgba(123,179,217,0.12);
+  }
+
+  .faq-item summary {
+    cursor: pointer;
+    padding: 0.9rem 1.1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--ink);
+    line-height: 1.4;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    user-select: none;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .faq-item summary::-webkit-details-marker { display: none; }
+
+  .faq-item summary::after {
+    content: '+';
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 1.25rem;
+    color: var(--saffron);
+    flex-shrink: 0;
+    line-height: 1;
+    transition: transform 0.25s ease;
+  }
+
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+
+  .faq-item[open] summary {
+    color: var(--saffron-dark);
+    background: var(--saffron-light);
+    border-bottom: 1px solid rgba(123,179,217,0.2);
+  }
+
+  .faq-answer {
+    padding: 1rem 1.1rem;
+    font-size: 0.9rem;
+    line-height: 1.72;
+    color: var(--ink-mid);
+    animation: faq-expand 0.2s ease;
+  }
+
+  .faq-answer strong { color: var(--ink); font-weight: 600; }
+
+  @keyframes faq-expand {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .faq-footer-note {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 0.95rem;
+    color: var(--stone);
+  }
+
+  .faq-footer-note a {
+    color: var(--saffron-dark);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 800px) {
+    #faq { padding: 4rem 1.5rem; }
+    .faq-grid { grid-template-columns: 1fr; gap: 0; }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: var(--white);
+    padding: 4rem 4rem 3rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    border-top: 3px solid var(--saffron);
+  }
+
+  .footer-logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.45rem;
+    letter-spacing: -0.01em;
+    color: var(--saffron);
+  }
+
+  .footer-logo span { color: var(--white); }
+
+  .footer-text {
+    font-size: 0.82rem;
+    color: var(--stone);
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  .footer-link-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    align-items: flex-start;
+  }
+
+  .footer-link-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 0.6rem;
+  }
+
+  .footer-links a {
+    font-size: 0.86rem;
+    color: var(--stone);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--saffron); }
+
+  @media (max-width: 800px) {
+    .footer-links { flex-direction: column; gap: 1.75rem; }
+  }
+
+  /* ── FOUNDER ── */
+  #founder {
+    background: var(--white);
+    padding: 6rem 4rem;
+    border-top: 1px solid var(--ash-mid);
+  }
+
+  .founder-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .founder-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .founder-portrait-wrap {
+    position: relative;
+  }
+
+  .founder-portrait-frame {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--ink);
+    box-shadow: 12px 12px 0 var(--coral);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .founder-portrait-frame:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0 var(--coral);
+  }
+
+  .founder-portrait {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .founder-portrait-tag {
+    margin-top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    background: var(--ash);
+    padding: 0.5rem 0.9rem;
+    border-radius: 2px;
+  }
+
+  .tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--saffron);
+  }
+
+  .founder-text .section-label { color: var(--saffron-dark); }
+
+  .founder-lead {
+    font-size: 1.15rem;
+    line-height: 1.65;
+    color: var(--ink);
+    font-weight: 400;
+    margin-bottom: 1.25rem;
+  }
+
+  .founder-text p {
+    color: var(--ink-mid);
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+  }
+
+  .founder-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--ash-mid);
+  }
+
+  .meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 0.25rem;
+  }
+
+  .meta-value {
+    font-size: 0.92rem;
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 800px) {
+    .founder-grid { grid-template-columns: 1fr; }
+    .founder-meta { grid-template-columns: 1fr; }
+    .founder-portrait-frame { box-shadow: 8px 8px 0 var(--coral); }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow { animation: fadeUp 0.6s ease both; }
+  .hero-h1 { animation: fadeUp 0.6s ease 0.1s both; }
+  .hero-sub { animation: fadeUp 0.6s ease 0.2s both; }
+  .hero-buttons { animation: fadeUp 0.6s ease 0.3s both; }
+  .hero-stats { animation: fadeUp 0.6s ease 0.4s both; }
+  .collage-main { animation: fadeUp 0.8s ease 0.5s both; }
+  .collage-small1 { animation: fadeUp 0.8s ease 0.7s both; }
+  .collage-small2 { animation: fadeUp 0.8s ease 0.9s both; }
+
+
+
+  /* responsive fallback */
+  @media (max-width: 800px) {
+    #home { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .mission-grid, .volunteer-grid, .donate-grid, .steps { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    section { padding: 4rem 1.5rem; }
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .footer-links { align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav>
+  <a href="#home" class="nav-logo">Pathfinders<span>NYC</span></a>
+  <ul class="nav-links">
+    <li><a href="#perks">For Teens</a></li>
+    <li><a href="#in-action">In Action</a></li>
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="#model">How It Works</a></li>
+    <li><a href="#volunteer">Volunteer</a></li>
+    <li><a href="#lead">Lead (18+)</a></li>
+    <li><a href="#donate">Donate</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#volunteer" class="nav-cta">Sign up</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="home">
+  <div class="hero-grid-bg"></div>
+
+  <div class="hero-left">
+    <div class="hero-eyebrow">Downtown Manhattan · Summer 2026 · Now accepting volunteers</div>
+    <h1 class="hero-h1">
+      Your summer,<br>
+      <em>but it actually</em>
+      counts.
+    </h1>
+    <p class="hero-sub">
+      Earn <strong>real community service hours</strong> doing something that actually matters. Walk downtown with a small crew, hand out <strong>food bags and clean kits</strong> to unhoused neighbors, and learn how to show up for people the right way. No fluff. No filler. Just one good weekend at a time.
+    </p>
+    <div class="hero-buttons">
+      <a href="#volunteer" class="btn-primary">Sign me up →</a>
+      <a href="#donate" class="btn-outline">Sponsor a Kit</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">$5</div>
+        <div class="hero-stat-label">Per complete care kit</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">13+</div>
+        <div class="hero-stat-label">Open to all teens</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">4 HRS</div>
+        <div class="hero-stat-label">Per shift, school-verified</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-map-art">
+      <!-- Downtown Manhattan route illustration -->
+      <div class="photo-collage">
+
+        <div class="collage-photo collage-main">
+          <svg viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="380" fill="#E6F1F8"/>
+            <circle cx="245" cy="55" r="22" fill="#F5D89E"/>
+            <rect x="20" y="80" width="35" height="180" fill="#FCEBE0"/>
+            <rect x="60" y="100" width="30" height="160" fill="#FDFAF4"/>
+            <rect x="250" y="100" width="35" height="160" fill="#FCEBE0"/>
+            <rect x="25" y="105" width="6" height="6" fill="#7BB3D9"/>
+            <rect x="38" y="105" width="6" height="6" fill="#7BB3D9"/>
+            <rect x="25" y="125" width="6" height="6" fill="#7BB3D9"/>
+            <rect x="38" y="125" width="6" height="6" fill="#7BB3D9"/>
+            <rect x="255" y="120" width="6" height="6" fill="#F5B89E"/>
+            <rect x="270" y="120" width="6" height="6" fill="#F5B89E"/>
+            <rect x="255" y="140" width="6" height="6" fill="#F5B89E"/>
+            <rect x="0" y="290" width="300" height="90" fill="#EDE5D8"/>
+            <circle cx="90" cy="190" r="20" fill="#4A8AB5"/>
+            <rect x="73" y="210" width="34" height="60" rx="5" fill="#7BB3D9"/>
+            <rect x="76" y="270" width="12" height="35" rx="3" fill="#2C3A48"/>
+            <rect x="92" y="270" width="12" height="35" rx="3" fill="#2C3A48"/>
+            <circle cx="150" cy="185" r="20" fill="#C68B6E"/>
+            <rect x="133" y="205" width="34" height="62" rx="5" fill="#F5B89E"/>
+            <rect x="136" y="267" width="12" height="38" rx="3" fill="#2C3A48"/>
+            <rect x="152" y="267" width="12" height="38" rx="3" fill="#2C3A48"/>
+            <circle cx="210" cy="192" r="20" fill="#D4B470"/>
+            <rect x="193" y="212" width="34" height="58" rx="5" fill="#F5D89E"/>
+            <rect x="196" y="270" width="12" height="35" rx="3" fill="#2C3A48"/>
+            <rect x="212" y="270" width="12" height="35" rx="3" fill="#2C3A48"/>
+            <rect x="105" y="240" width="18" height="22" rx="2" fill="#FDFAF4" stroke="#4A8AB5" stroke-width="1.5"/>
+            <rect x="165" y="240" width="18" height="22" rx="2" fill="#FDFAF4" stroke="#4A8AB5" stroke-width="1.5"/>
+            <rect x="225" y="240" width="18" height="22" rx="2" fill="#FDFAF4" stroke="#4A8AB5" stroke-width="1.5"/>
+          </svg>
+          <span class="art-caption">Cohort walking · downtown route</span>
+        </div>
+
+        <div class="collage-photo collage-small1">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#FBF1DB"/>
+            <rect x="40" y="50" width="120" height="100" rx="8" fill="#7BB3D9"/>
+            <rect x="50" y="60" width="45" height="35" rx="3" fill="#FDFAF4"/>
+            <rect x="105" y="60" width="45" height="35" rx="3" fill="#FDFAF4"/>
+            <rect x="50" y="105" width="100" height="35" rx="3" fill="#F5B89E"/>
+            <circle cx="100" cy="40" r="14" fill="#F5D89E"/>
+            <rect x="92" y="35" width="16" height="3" fill="#4A8AB5"/>
+            <rect x="98" y="29" width="3" height="16" fill="#4A8AB5"/>
+          </svg>
+          <span class="art-caption">The $5 kits — food &amp; clean</span>
+        </div>
+
+        <div class="collage-photo collage-small2">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#FCEBE0"/>
+            <circle cx="100" cy="100" r="60" fill="none" stroke="#F5B89E" stroke-width="2.5" stroke-dasharray="6 4"/>
+            <circle cx="100" cy="48" r="14" fill="#7BB3D9"/>
+            <circle cx="145" cy="80" r="14" fill="#F5D89E"/>
+            <circle cx="138" cy="135" r="14" fill="#8FB87E"/>
+            <circle cx="100" cy="155" r="14" fill="#E07B6F"/>
+            <circle cx="62" cy="135" r="14" fill="#F5B89E"/>
+            <circle cx="55" cy="80" r="14" fill="#4A8AB5"/>
+          </svg>
+          <span class="art-caption">Post-walk debrief circle</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ WHAT YOU GET ═══════════════ -->
+<section id="perks">
+  <div class="perks-inner">
+    <div class="perks-header">
+      <div class="section-label">For high schoolers</div>
+      <h2 class="section-h2">What's the deal?</h2>
+      <p class="perks-sub">Straight up — here's what you actually get out of this.</p>
+    </div>
+
+    <div class="perks-grid">
+      <div class="perk-card perk-1">
+        <div class="perk-icon">⏱</div>
+        <h3>Real service hours</h3>
+        <p>4 verified service hours per shift, signed off the same day. Counts toward your graduation requirement and looks great on college apps. No catch.</p>
+      </div>
+
+      <div class="perk-card perk-2">
+        <div class="perk-icon">👥</div>
+        <h3>You won't be alone</h3>
+        <p>Small crews of 4–6 teens, always with a college-aged mentor. Bring a friend. Meet new ones. It's a vibe, not a chore.</p>
+      </div>
+
+      <div class="perk-card perk-3">
+        <div class="perk-icon">🧠</div>
+        <h3>Skills you'll actually use</h3>
+        <p>How to talk to anyone. How to listen. How to handle hard moments with grace. Stuff that matters in college, in a job, in life.</p>
+      </div>
+
+      <div class="perk-card perk-4">
+        <div class="perk-icon">💬</div>
+        <h3>Real conversations</h3>
+        <p>Pre-walk huddles and post-walk debriefs. Process what you saw. Ask questions. Get mentored by someone who's been where you are.</p>
+      </div>
+
+      <div class="perk-card perk-5">
+        <div class="perk-icon">🏙️</div>
+        <h3>Your city, your block</h3>
+        <p>This isn't a field trip to somewhere unfamiliar. We walk the same streets you already walk. Make them a little better.</p>
+      </div>
+
+      <div class="perk-card perk-6">
+        <div class="perk-icon">🎟️</div>
+        <h3>Try it free</h3>
+        <p>Your first walk is on us — come see if it&rsquo;s right for you. After that, a one-time <strong>$50 join fee</strong> covers your portion of supplies and materials for the rest of the summer.</p>
+      </div>
+    </div>
+
+    <div class="perks-cta">
+      <a href="#volunteer" class="btn-primary">Save my spot →</a>
+      <p>First walks kick off in June. Shifts run Friday evenings, Saturday mornings, and Saturday evenings — exact times shared in advance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ IN ACTION GALLERY ═══════════════ -->
+<section id="in-action">
+  <div class="action-inner">
+    <div class="action-header">
+      <div class="section-label">In action</div>
+      <h2 class="section-h2">This is what a Saturday looks like.</h2>
+      <p class="action-sub">
+        Real teens. Real streets. Real conversations. Here's a snapshot of every part of a shift.
+      </p>
+    </div>
+
+    <div class="action-gallery">
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="300" fill="#E6F1F8"/>
+            <rect x="60" y="180" width="280" height="90" rx="8" fill="#F5B89E"/>
+            <circle cx="120" cy="155" r="16" fill="#F5D89E"/>
+            <rect x="105" y="172" width="30" height="14" rx="2" fill="#F5D89E"/>
+            <circle cx="200" cy="150" r="16" fill="#7BB3D9"/>
+            <rect x="185" y="167" width="30" height="14" rx="2" fill="#7BB3D9"/>
+            <circle cx="280" cy="155" r="16" fill="#8FB87E"/>
+            <rect x="265" y="172" width="30" height="14" rx="2" fill="#8FB87E"/>
+            <rect x="80" y="200" width="45" height="55" rx="3" fill="#FDFAF4"/>
+            <rect x="175" y="200" width="45" height="55" rx="3" fill="#FDFAF4"/>
+            <rect x="270" y="200" width="45" height="55" rx="3" fill="#FDFAF4"/>
+          </svg>
+          <span class="gallery-label">Kit assembly</span>
+        </div>
+        <div class="gallery-caption">
+          <h4>Build the kits</h4>
+          <p>Volunteers assemble food bags (sandwich, water, granola bar, clementine) and clean kits (soap, razor, toothbrush, toothpaste, socks) — roughly $5 each.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="300" fill="#FCEBE0"/>
+            <rect x="0" y="240" width="400" height="60" fill="#EDE5D8"/>
+            <rect x="20" y="50" width="60" height="190" fill="#FBF1DB"/>
+            <rect x="320" y="60" width="60" height="180" fill="#E6F1F8"/>
+            <rect x="30" y="75" width="8" height="8" fill="#7BB3D9"/>
+            <rect x="45" y="75" width="8" height="8" fill="#7BB3D9"/>
+            <rect x="60" y="75" width="8" height="8" fill="#7BB3D9"/>
+            <rect x="335" y="80" width="8" height="8" fill="#F5B89E"/>
+            <rect x="350" y="80" width="8" height="8" fill="#F5B89E"/>
+            <circle cx="140" cy="160" r="20" fill="#7BB3D9"/>
+            <rect x="123" y="180" width="34" height="62" rx="5" fill="#7BB3D9"/>
+            <circle cx="200" cy="160" r="20" fill="#F5D89E"/>
+            <rect x="183" y="180" width="34" height="62" rx="5" fill="#F5D89E"/>
+            <circle cx="260" cy="160" r="20" fill="#F5B89E"/>
+            <rect x="243" y="180" width="34" height="62" rx="5" fill="#F5B89E"/>
+          </svg>
+          <span class="gallery-label">On route</span>
+        </div>
+        <div class="gallery-caption">
+          <h4>Walk the route</h4>
+          <p>Small cohorts walk predetermined routes through downtown Manhattan, always with a mentor.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="300" fill="#FBF1DB"/>
+            <circle cx="160" cy="155" r="42" fill="#7BB3D9"/>
+            <rect x="125" y="190" width="70" height="80" rx="5" fill="#7BB3D9"/>
+            <circle cx="280" cy="155" r="42" fill="#F5B89E"/>
+            <rect x="245" y="190" width="70" height="80" rx="5" fill="#F5B89E"/>
+            <ellipse cx="220" cy="125" rx="22" ry="14" fill="white" opacity="0.85"/>
+            <circle cx="213" cy="125" r="2" fill="#2C3A48"/>
+            <circle cx="220" cy="125" r="2" fill="#2C3A48"/>
+            <circle cx="227" cy="125" r="2" fill="#2C3A48"/>
+          </svg>
+          <span class="gallery-label">Real conversation</span>
+        </div>
+        <div class="gallery-caption">
+          <h4>Listen and connect</h4>
+          <p>This isn't drop-and-go. We learn how to greet, listen, and treat every person with dignity.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="300" fill="#EAF2E4"/>
+            <circle cx="200" cy="160" r="105" fill="none" stroke="#8FB87E" stroke-width="2.5" stroke-dasharray="6 4"/>
+            <circle cx="200" cy="70" r="22" fill="#7BB3D9"/>
+            <circle cx="285" cy="125" r="22" fill="#F5D89E"/>
+            <circle cx="275" cy="215" r="22" fill="#8FB87E"/>
+            <circle cx="200" cy="245" r="22" fill="#E07B6F"/>
+            <circle cx="125" cy="215" r="22" fill="#F5B89E"/>
+            <circle cx="115" cy="125" r="22" fill="#4A8AB5"/>
+          </svg>
+          <span class="gallery-label">Group debrief</span>
+        </div>
+        <div class="gallery-caption">
+          <h4>Reflect together</h4>
+          <p>Every walk ends with a group debrief. We talk through what we saw, what was hard, what we learned.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="gallery-note">
+      Want to see what an actual Saturday looks like in real time? Follow <a href="https://www.instagram.com/pathfinders.nyc/" target="_blank" rel="noopener">@pathfinders.nyc</a> on Instagram for photos and updates from our walks all summer long.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MISSION ═══════════════ -->
+<section id="mission">
+  <div class="mission-inner">
+    <div class="section-label">Our Mission</div>
+    <h2 class="section-h2">Two goals.<br>One walk.</h2>
+
+    <div class="mission-grid">
+      <div class="mission-text">
+        <p>
+          Pathfinders NYC exists because two things are true at once: our neighbors on the streets of downtown Manhattan need <strong>real, tangible help</strong> — and the teenagers in our own city have more energy, empathy, and capacity to lead than anyone gives them credit for. We're trying to put those two facts in the same room.
+        </p>
+        <p>
+          We don't believe in charity that strips people of their dignity. Every walk is a lesson in <strong>"street-side manner"</strong> — the same principle that guides a good clinician: approach with curiosity, listen first, and treat every person as fully human. We model this, practice it together, and debrief on it after every shift.
+        </p>
+        <p>
+          The science is clear: loneliness and isolation drive mental illness, substance use, and deteriorating health. A 2024 Harvard study found that 81% of chronically lonely adults reported anxiety or depression. Genuine human connection — stopping, talking, seeing someone — is itself an act of public health. Our goal isn't just to hand out supplies. It's to build a city where people are <em>seen</em>.
+        </p>
+        <p>
+          Pathfinders NYC is entirely secular, entirely grassroots, and built to run lean. Every dollar raised goes directly into kits. Every volunteer hour counts toward your school's community service requirement. No bureaucracy. No barriers. Just <strong>show up and step up.</strong>
+        </p>
+        <div class="research-callout">
+          <div class="research-stat">81%</div>
+          <div class="research-text">
+            <strong>of chronically lonely adults reported anxiety or depression</strong> — compared to 29% of those who felt more connected.
+            <span class="research-source">Harvard Graduate School of Education, Making Caring Common Project, 2024 · The U.S. Surgeon General declared loneliness a public health epidemic in 2023.</span>
+          </div>
+        </div>
+
+        <a href="#volunteer" class="btn-primary" style="margin-top: 1rem; display: inline-block;">Volunteer this summer →</a>
+      </div>
+
+      <div class="mission-cards">
+        <div class="mission-card">
+          <div class="mission-card-icon">🧴</div>
+          <h3>Immediate Community Aid</h3>
+          <p>
+            Each shift, volunteers assemble and distribute two things along our downtown routes: <strong>food bags</strong> (sandwich, water, granola bar, clementine) and <strong>clean kits</strong> (soap, razor, toothbrush, toothpaste, socks). Direct. Tangible. Measurable.
+          </p>
+        </div>
+        <div class="mission-card">
+          <div class="mission-card-icon">🧭</div>
+          <h3>Youth Leadership Pipeline</h3>
+          <p>
+            Every shift is led by a college-aged mentor trained in public health communication and street-side manner. High schoolers learn from people only a few years older — and over time, returning volunteers can grow into peer leaders and cohort leaders themselves.
+          </p>
+        </div>
+        <div class="mission-card">
+          <div class="mission-card-icon">🏙️</div>
+          <h3>Trusted Routes, Real Roots</h3>
+          <p>
+            Our routes aren't new. They're the same paths Lucas walked as a high schooler with the Downtown Hunger Action Project (DHAP). Pathfinders NYC is a direct continuation of that work — updated, expanded, and built to last. Entirely secular. Open to everyone.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOUNDER ═══════════════ -->
+<section id="founder">
+  <div class="founder-inner">
+    <div class="founder-grid">
+      <div class="founder-portrait-wrap">
+        <div class="founder-portrait-frame">
+          <img src="data:image/jpeg;base64,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" alt="Lucas, founder of Pathfinders NYC" class="founder-portrait">
+        </div>
+        <div class="founder-portrait-tag">
+          <span class="tag-dot"></span>
+          <span>Bard HSEC Manhattan, Class of 2024</span>
+        </div>
+      </div>
+
+      <div class="founder-text">
+        <div class="section-label">Founder</div>
+        <h2 class="section-h2">Hi, I'm Lucas.</h2>
+        <p class="founder-lead">
+          Coming home to New York from Nashville this past year, I was struck by something I'd somehow stopped noticing — the number of people sleeping on the streets downtown. It hit differently when I was seeing it fresh.
+        </p>
+        <p>
+          During high school, I was part of the Downtown Hunger Action Project. We walked the same routes every week, handing out food and clothing to unhoused neighbors. It was one of the most formative things I did growing up here. When I came back and looked for something similar for local teenagers to join over the summer, I couldn't find anything. So I made it.
+        </p>
+        <p>
+          The research backs up what I felt intuitively. A 2024 Harvard study found that 81% of lonely adults reported anxiety or depression — compared to 29% of those who felt more connected. The U.S. Surgeon General declared loneliness a public health epidemic in 2023. People experiencing homelessness face these pressures at disproportionate levels. Meaningful human contact isn't a nice-to-have. It genuinely matters.
+        </p>
+        <p>
+          My hope is that Pathfinders can be two things at once: a real, tangible resource for unhoused neighbors, and proof that a group of teenagers stopping to say good evening makes a difference — for the city, and for the people doing the stopping.
+        </p>
+        <div class="founder-meta">
+          <div class="founder-meta-item">
+            <div class="meta-label">Hometown</div>
+            <div class="meta-value">Downtown Manhattan</div>
+          </div>
+          <div class="founder-meta-item">
+            <div class="meta-label">Studying at</div>
+            <div class="meta-value">Vanderbilt University</div>
+          </div>
+          <div class="founder-meta-item">
+            <div class="meta-label">Major</div>
+            <div class="meta-value">Medicine, Health &amp; Society</div>
+          </div>
+          <div class="founder-meta-item">
+            <div class="meta-label">Previously</div>
+            <div class="meta-value">NYC Department of Health</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+<section id="model">
+  <div class="model-inner">
+    <div class="section-label">The Model</div>
+    <h2 class="section-h2">How a shift actually works</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-tag">Pre-Walk · 20 min</div>
+        <h3>Prep &amp; Huddle</h3>
+        <p>
+          Volunteers meet at the rally point, assemble care kits as a team, and gather for a structured pre-walk huddle with your peer mentor.
+        </p>
+        <div class="step-details">
+          <div class="step-detail">Assembly-line packing of food bags (sandwich, water, granola bar, clementine)</div>
+          <div class="step-detail">Assembly-line packing of clean kits (soap, razor, toothbrush, toothpaste, socks)</div>
+          <div class="step-detail">The cohort builds kits together — every person on the route receives both</div>
+          <div class="step-detail">Street-side manner coaching — how to approach, greet, and listen</div>
+          <div class="step-detail">Safety briefing, cohort pairing, route overview</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-tag">The Walk · ~90 min</div>
+        <h3>Walk the Route</h3>
+        <p>
+          Small, supervised cohorts of 4–6 teens walk a proven ~2-mile downtown route alongside a trained mentor. Every person we meet receives both a food bag and a clean kit — distributed with dignity.
+        </p>
+        <div class="step-details">
+          <div class="step-detail">Cohorts of 4–6 volunteers, never alone</div>
+          <div class="step-detail">Mentor-supervised at all times</div>
+          <div class="step-detail">Proven, well-trafficked public routes (used previously with DHAP)</div>
+          <div class="step-detail">Focus on listening and human connection, not just drop-off</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-tag">Post-Walk · 20 min</div>
+        <h3>Debrief &amp; Reflect</h3>
+        <p>
+          Every shift ends with a structured debrief — because processing what you saw matters as much as what you did. This is where leadership is built.
+        </p>
+        <div class="step-details">
+          <div class="step-detail">Group reflection — what worked, what was hard, what surprised you</div>
+          <div class="step-detail">Mentor feedback and real-world context</div>
+          <div class="step-detail">Community service hours verified and signed</div>
+          <div class="step-detail">Optional: journaling prompt for school portfolios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ VOLUNTEER ═══════════════ -->
+<section id="volunteer">
+  <div class="volunteer-inner">
+    <div class="section-label">Volunteer Sign-Up</div>
+    <h2 class="section-h2">Alright, you in?</h2>
+
+    <div class="volunteer-grid">
+      <div class="volunteer-left">
+        <h3>For Teens (Ages 13+)</h3>
+        <p>
+          If you go to school anywhere in NYC and you spend time downtown — this is for you. No experience needed. You don't need to know what you're doing, you don't need to be a "volunteer type." You just need to want to show up.
+        </p>
+        <p>
+          Every shift earns 4 verified service hours accepted by NYC public and private high schools. Your first walk is free — try it before committing. After that, a one-time <strong>$50 join fee</strong> covers your participation for the rest of the summer (your portion of kit supplies, training materials, and a Pathfinders tote). After three shifts, returning volunteers can step into a "veteran volunteer" role helping onboard newcomers. (Heading to college? Check out the <a href="#lead" style="color: var(--saffron-dark); text-decoration: underline; text-underline-offset: 2px;">cohort leader path</a>.)
+        </p>
+
+        <h3 style="margin-top: 1.5rem;">For Parents &amp; Guardians</h3>
+        <p>
+          We understand that safety is your top priority. Here's how we've designed Pathfinders NYC to give you peace of mind:
+        </p>
+
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span><strong>Small, supervised cohorts</strong> — 4 to 6 teens per mentor at all times. Your child is never unaccompanied.</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span><strong>Proven public routes</strong> in well-trafficked downtown neighborhoods — used previously by Lucas with the Downtown Hunger Action Project (DHAP).</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span><strong>Parent/guardian waiver required.</strong> We collect emergency contacts and communicate shift details in advance.</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span><strong>Founded and led by a pre-med college student</strong> with hands-on public health experience at the NYC Department of Health, supported by a vetted team of college-aged cohort leaders.</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span><strong>Optional parent observation</strong> — parents are welcome to attend their child's first shift to see how the program runs in person.</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span><strong>Scheduled shifts shared in advance</strong> — typically Friday evenings, Saturday mornings, or Saturday evenings. Parents confirm each shift before their teen participates.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign-up Form -->
+      <div class="signup-form-card">
+        <h3>Save your spot</h3>
+        <p class="form-sub">Takes 2 minutes, no commitment yet. We'll send you upcoming dates and the parent waiver. Your first walk is free — decide if it's for you before paying anything.</p>
+
+        <iframe
+          class="signup-iframe"
+          src="https://docs.google.com/forms/d/e/1FAIpQLSf6-UHS-knRURyflhp_QIei_OWNdV3UAHR817FOA36ZD9nxmA/viewform?embedded=true"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          loading="lazy"
+          title="Pathfinders NYC volunteer sign-up form">
+          Loading sign-up form…
+        </iframe>
+
+        <p class="iframe-fallback">
+          Trouble loading? <a href="https://docs.google.com/forms/d/e/1FAIpQLSf6-UHS-knRURyflhp_QIei_OWNdV3UAHR817FOA36ZD9nxmA/viewform" target="_blank" rel="noopener">Open the form in a new tab →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ COHORT LEADERS ═══════════════ -->
+<section id="lead">
+  <div class="lead-inner">
+
+    <div class="lead-header">
+      <div class="section-label">For college students · 18+</div>
+      <h2 class="section-h2">Lead a crew.</h2>
+      <p class="lead-sub">
+        Pathfinders NYC needs cohort leaders — the people who actually run shifts on the ground. If you're a college student in the NYC area this summer (or home from school), this is hands-on leadership experience that goes deeper than a club role or a resume line.
+      </p>
+    </div>
+
+    <div class="lead-grid">
+
+      <!-- LEFT: What you do -->
+      <div class="lead-left">
+        <div class="lead-section-title">What you'd actually do</div>
+        <ul class="lead-checklist">
+          <li>
+            <strong>Lead a cohort of 4–6 teens</strong> through a full ~4-hour shift, start to finish.
+          </li>
+          <li>
+            <strong>Run the pre-walk huddle</strong> — coach the team on street-side manner, brief them on the route, set the tone.
+          </li>
+          <li>
+            <strong>Walk alongside your crew</strong>, modeling how to greet, listen, and engage with dignity.
+          </li>
+          <li>
+            <strong>Facilitate the post-walk debrief</strong> — the hardest and most important part. This is where leadership actually happens.
+          </li>
+          <li>
+            <strong>Help shape the program</strong> as we grow. This is year one. Leaders define what Pathfinders becomes.
+          </li>
+        </ul>
+
+        <div class="lead-mentor-note">
+          <div class="mentor-note-icon">L</div>
+          <div>
+            <strong>You won't be thrown in cold.</strong> Every cohort leader trains with me directly before their first shift — going over street-side manner, safety protocols, and how to facilitate hard debrief conversations.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Why -->
+      <div class="lead-right">
+        <div class="lead-section-title">Why you'd actually want to</div>
+        <div class="lead-perks-grid">
+
+          <div class="lead-perk">
+            <div class="lead-perk-icon">🎯</div>
+            <h4>Real leadership</h4>
+            <p>You're running a team, managing logistics, and holding space in hard moments. Worth more than another club VP title.</p>
+          </div>
+
+          <div class="lead-perk">
+            <div class="lead-perk-icon">📋</div>
+            <h4>Resume / CV gold</h4>
+            <p>Especially strong for pre-med, public health, social work, and education tracks. Letters of recommendation available.</p>
+          </div>
+
+          <div class="lead-perk">
+            <div class="lead-perk-icon">💬</div>
+            <h4>Transferable skills</h4>
+            <p>Group facilitation, hard conversations, working across difference. Useful in literally any career.</p>
+          </div>
+
+          <div class="lead-perk">
+            <div class="lead-perk-icon">🌱</div>
+            <h4>Build something</h4>
+            <p>You're not joining a polished machine. You're co-founding a community program in its first summer.</p>
+          </div>
+
+        </div>
+
+        <div class="lead-commit">
+          <div class="commit-label">Commitment</div>
+          <div class="commit-text">
+            One shift per weekend during summer (or as availability allows), plus a one-time training session. Flexible around classes and travel.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- APPLY CTA -->
+    <div class="lead-cta">
+      <div class="lead-cta-text">
+        <h3>Want in?</h3>
+        <p>
+          No formal application. No CV required. Just email me a paragraph or two about who you are, what you're studying, and why you want to lead. We'll set up a call from there.
+        </p>
+      </div>
+      <a href="mailto:lucasrschaeffer@gmail.com?subject=Cohort%20Leader%20Application%20—%20Pathfinders%20NYC" class="lead-apply-btn">
+        Apply to Lead →
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ DONATE ═══════════════ -->
+<section id="donate">
+  <div class="donate-bg-text">$5</div>
+  <div class="donate-inner">
+    <div class="section-label">Donate / Sponsor a Kit</div>
+    <h2 class="section-h2">$5 changes<br>everything.</h2>
+
+    <div class="donate-grid">
+      <div class="donate-left">
+        <p>
+          Pathfinders NYC runs on a micro-funding model — no overhead, no administrative bloat. <strong>100% of donations go directly into care kits.</strong> We are funded by the community, for the community, through peer-to-peer giving via Venmo and GoFundMe.
+        </p>
+        <p>
+          At every shift, our cohort assembly-lines two kits for each person we meet on the route: a <strong>food bag</strong> (sandwich, water, granola bar, clementine) and a <strong>clean kit</strong> (soap, razor, toothbrush, toothpaste, socks). Each kit costs roughly <strong>$5 to assemble</strong> — so <strong>$10 covers one complete handoff</strong> to one neighbor.
+        </p>
+        <p>
+          You don't have to volunteer to make a difference. <strong>Sponsoring just $20 means two complete handoffs — two neighbors who get both food and clean kits, treated with dignity in a tangible moment of care.</strong>
+        </p>
+
+        <div class="donate-callout">
+          <div class="donate-callout-num">100%</div>
+          <div class="donate-callout-text">
+            <strong>Every dollar goes to kits.</strong><br>
+            No overhead. No salaries. No administrative fees. The full amount you give buys supplies that end up in someone's hands on the same route.
+          </div>
+        </div>
+
+        <div class="kit-breakdown">
+          <h4>What's in a $5 food bag</h4>
+          <div class="kit-item">
+            <span>Sandwich (peanut butter or turkey)</span>
+            <span class="kit-item-cost">$1.50</span>
+          </div>
+          <div class="kit-item">
+            <span>16 oz bottled water</span>
+            <span class="kit-item-cost">$0.80</span>
+          </div>
+          <div class="kit-item">
+            <span>Granola bar</span>
+            <span class="kit-item-cost">$0.90</span>
+          </div>
+          <div class="kit-item">
+            <span>Clementine</span>
+            <span class="kit-item-cost">$0.50</span>
+          </div>
+          <div class="kit-item">
+            <span>Handwritten note</span>
+            <span class="kit-item-cost">Priceless</span>
+          </div>
+        </div>
+
+        <div class="kit-breakdown" style="margin-top: 1rem;">
+          <h4>What's in a $5 clean kit</h4>
+          <div class="kit-item">
+            <span>Bar soap</span>
+            <span class="kit-item-cost">$0.75</span>
+          </div>
+          <div class="kit-item">
+            <span>Disposable razor</span>
+            <span class="kit-item-cost">$1.20</span>
+          </div>
+          <div class="kit-item">
+            <span>Travel toothbrush</span>
+            <span class="kit-item-cost">$0.50</span>
+          </div>
+          <div class="kit-item">
+            <span>Travel toothpaste</span>
+            <span class="kit-item-cost">$1.20</span>
+          </div>
+          <div class="kit-item">
+            <span>Pair of socks</span>
+            <span class="kit-item-cost">$1.10</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="donate-options">
+          <a href="#" class="donate-option">
+            <div class="donate-option-header">
+              <div class="donate-amount">$5</div>
+              <div class="donate-tag">1 kit</div>
+            </div>
+            <div class="donate-desc">Funds one kit — half of a complete handoff. Every neighbor we meet receives both a food bag and a clean kit.</div>
+          </a>
+
+          <a href="#" class="donate-option featured">
+            <div class="donate-option-header">
+              <div class="donate-amount">$20</div>
+              <div class="donate-tag">4 kits · Most popular</div>
+            </div>
+            <div class="donate-desc">Two complete handoffs — both food and clean kits delivered to two neighbors.</div>
+          </a>
+
+          <a href="#" class="donate-option">
+            <div class="donate-option-header">
+              <div class="donate-amount">$50</div>
+              <div class="donate-tag">10 kits · Pathfinder</div>
+            </div>
+            <div class="donate-desc">Five complete handoffs — both kits to five neighbors. Recognized in our monthly donor email.</div>
+          </a>
+
+          <a href="#" class="donate-option">
+            <div class="donate-option-header">
+              <div class="donate-amount">$100</div>
+              <div class="donate-tag">20 kits · Champion</div>
+            </div>
+            <div class="donate-desc">Ten complete handoffs — a full walk's supply, both kits for ten neighbors. We'll send you a recap with photos and impact notes from the route.</div>
+          </a>
+        </div>
+
+        <div class="donate-cta-row">
+          <a href="#" class="btn-dark">Donate via GoFundMe →</a>
+          <a href="#" class="btn-dark" style="background: var(--coral); color: var(--white);">Venmo @pathfinders.nyc</a>
+        </div>
+
+        <p style="font-size: 0.78rem; color: var(--ink-mid); margin-top: 1.25rem; line-height: 1.6;">
+          Pathfinders NYC is a volunteer-run grassroots initiative. We are not currently a registered 501(c)(3). Donations are not tax-deductible at this time. We provide full transparency on all spending upon request.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section id="faq">
+  <div class="faq-inner">
+    <div class="faq-header">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-h2">Questions we actually get.</h2>
+      <p class="faq-sub">Organized by who's asking. Tap any question to expand it.</p>
+    </div>
+
+    <div class="faq-grid">
+
+      <div class="faq-col">
+        <div class="faq-category-label">For teens</div>
+
+        <details class="faq-item">
+          <summary>Do I need any experience or special skills?</summary>
+          <div class="faq-answer">None at all. You don't need to have volunteered before, you don't need to know anyone in the program, and you don't need to be a "community service type." The pre-walk huddle gets everyone on the same page before we go. You show up — we handle the rest.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I come alone, or do I need to bring a friend?</summary>
+          <div class="faq-answer">Either works. Lots of volunteers come solo and meet people through the program. Bringing a friend is great too — cohorts are 4–6 people, so there's room. Just make sure you both sign up separately.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>How do I get my service hours verified for school?</summary>
+          <div class="faq-answer">After every shift, Lucas signs a service-hour confirmation for each volunteer — 4 hours per shift. Most NYC schools accept this directly. If your school requires a specific form or letter, tell us before your first walk and we'll fill it out correctly. After your third shift we can also write a summary letter for college applications.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What should I wear and bring?</summary>
+          <div class="faq-answer">Comfortable walking shoes — we cover about 2 miles. Dress for the weather; sunscreen and a water bottle are smart in summer. Don't bring anything valuable you'd be stressed about losing. We supply everything we're distributing.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>How does the $50 join fee work? Is it really free to try?</summary>
+          <div class="faq-answer">Yes — your first walk is genuinely free. Come, see what a shift looks like, decide if it's right for you. If you want to keep coming, a one-time $50 fee covers your participation for the rest of the summer (your share of kit supplies, training materials, and a Pathfinders tote). One payment, all season. You only pay if you're in.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if I can't afford the $50 fee?</summary>
+          <div class="faq-answer">Reach out to Lucas directly. We don't want money to be the reason someone misses out — there's a need-based waiver available, no questions asked, no documentation required. Just email <a href="mailto:lucasrschaeffer@gmail.com" style="color: var(--saffron-dark); text-decoration: underline;">lucasrschaeffer@gmail.com</a>.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if I have to cancel after signing up?</summary>
+          <div class="faq-answer">Life happens. Just email or text Lucas as early as possible so we can adjust cohort sizes. No penalty — sign up for a future date whenever you're ready.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>When do shifts actually run?</summary>
+          <div class="faq-answer">Most weekends throughout the summer. Typical slots are Friday evenings, Saturday mornings, and Saturday evenings — we vary the schedule so volunteers can find times that work. Each shift's exact date and time is posted in advance, and you only sign up for the specific shifts you want.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What if something uncomfortable happens on the walk?</summary>
+          <div class="faq-answer">Your mentor is trained specifically for this. If an interaction gets hard — someone is in crisis, someone is aggressive, or you just feel unsure — step back and let your mentor handle it. The post-walk debrief is designed to process anything that felt difficult. You will never be left to handle something alone.</div>
+        </details>
+
+        <div class="faq-category-label" style="margin-top: 1.75rem;">For cohort leaders (18+)</div>
+
+        <details class="faq-item">
+          <summary>Do I need public health or social work experience?</summary>
+          <div class="faq-answer">It helps, but it's not required. We're looking for maturity, reliability, and genuine interest in working with teens and unhoused communities. Lucas trains every cohort leader directly before their first shift — street-side manner, safety protocols, and how to facilitate a debrief.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What's the actual time commitment?</summary>
+          <div class="faq-answer">One 4-hour shift per weekend (or as your schedule allows), plus a one-time training session before your first walk. Flexible around classes and travel. One Friday or Saturday a week doing something that matters — not a 40-hour commitment.</div>
+        </details>
+      </div>
+
+      <div class="faq-col">
+        <div class="faq-category-label">For parents &amp; guardians</div>
+
+        <details class="faq-item">
+          <summary>Who exactly is supervising my child?</summary>
+          <div class="faq-answer">Every cohort is led by a trained, background-checked college student. Lucas Schaeffer — the program founder — personally runs every walk this first summer. He's a Bard HSEC Manhattan alum ('24), rising junior at Vanderbilt studying Medicine, Health &amp; Society, and has worked at the NYC Department of Health. He grew up in downtown Manhattan.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I come and see how the program works?</summary>
+          <div class="faq-answer">Yes — and we actively encourage it. Parents are welcome to attend any shift as observers, no advance notice needed. Come for the first one, see how the huddle runs, meet the other teens and mentors. We'd rather you see it in person than wonder.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What areas does the program walk through?</summary>
+          <div class="faq-answer">Routes go through downtown Manhattan on well-trafficked streets. These aren't new — they're the same paths Lucas walked as a high schooler with the Downtown Hunger Action Project (DHAP). Pathfinders NYC was born directly out of that experience. Exact route and timing for each shift are shared with families in advance.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>My child has a medical condition or allergy. Can they still participate?</summary>
+          <div class="faq-answer">In most cases, yes. The waiver includes a section for you to note any conditions, allergies, or medications we should know about. If you have specific concerns, reach out to Lucas directly before signing up — he'd rather have that conversation upfront.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is this affiliated with any religious organization?</summary>
+          <div class="faq-answer">No. Pathfinders NYC is entirely secular and not affiliated with any religious institution, political organization, or corporate sponsor. We welcome volunteers of every background, faith, and identity.</div>
+        </details>
+
+        <div class="faq-category-label" style="margin-top: 1.75rem;">Donations &amp; money</div>
+
+        <details class="faq-item">
+          <summary>Where does my donation actually go?</summary>
+          <div class="faq-answer">Directly into kits — food bags (sandwich, water, granola bar, clementine) and clean kits (soap, razor, toothbrush, toothpaste, socks). Volunteer join fees cover volunteer participation; outside donations let us reach more neighbors and waive fees for teens who can't afford to pay. No salaries, no office costs, no overhead. Full expense breakdowns available on request.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is my donation tax-deductible?</summary>
+          <div class="faq-answer">Not yet. Pathfinders NYC is a grassroots initiative in its first year and not yet incorporated as a 501(c)(3). If tax-deductibility matters, the most helpful thing right now is sharing the program with families who need service hours, or buying supplies directly off our kit wishlist.</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I sponsor a specific shift rather than donating generally?</summary>
+          <div class="faq-answer">Yes — email Lucas at lucasrschaeffer@gmail.com and we can arrange it. Sponsoring a full shift's kit supply (typically $50–100 depending on group size) funds one complete walk, start to finish. We'll send you a note on how it went.</div>
+        </details>
+      </div>
+
+    </div>
+
+    <div class="faq-footer-note">
+      Don't see your question? <a href="mailto:lucasrschaeffer@gmail.com">Email Lucas directly</a> — he reads and responds to every message.
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  <div>
+    <div class="footer-logo">Pathfinders<span>NYC</span></div>
+    <p class="footer-text" style="margin-top: 0.5rem;">
+      A grassroots youth volunteer initiative serving downtown Manhattan. Built by teens, for neighbors.
+    </p>
+  </div>
+
+  <div style="font-size: 0.82rem; color: var(--stone); text-align: center;">
+    <div style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; color: var(--saffron); margin-bottom: 0.4rem;">SUMMER 2026</div>
+    <div>Downtown Manhattan</div>
+    <div>New York City</div>
+  </div>
+
+  <div class="footer-links">
+    <div class="footer-link-group">
+      <div class="footer-link-heading">Navigate</div>
+      <a href="#home">Top of page</a>
+      <a href="#perks">For teens</a>
+      <a href="#in-action">In action</a>
+      <a href="#mission">Mission</a>
+      <a href="#founder">Founder</a>
+      <a href="#model">How it works</a>
+      <a href="#volunteer">Sign up (teens)</a>
+      <a href="#lead">Apply to lead (18+)</a>
+      <a href="#donate">Donate</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="footer-link-group">
+      <div class="footer-link-heading">Connect</div>
+      <a href="mailto:hello@pathfindersnyc.org">hello@pathfindersnyc.org</a>
+      <a href="https://www.instagram.com/pathfinders.nyc/" target="_blank" rel="noopener">@pathfinders.nyc on Instagram</a>
+      <a href="#">Venmo · @pathfinders.nyc</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
