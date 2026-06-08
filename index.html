@@ -6,7 +6,7 @@
 <title>Pathfinders NYC — Youth Volunteer Program</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" [...]>
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -921,6 +921,74 @@
     line-height: 1.5;
   }
 
+  .signup-iframe {
+    display: block;
+    width: 100%;
+    height: 1841px;
+    border: none;
+    border-radius: 4px;
+    background: var(--ash);
+  }
+
+  .iframe-fallback {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--stone);
+    margin-top: 1rem;
+  }
+
+  .iframe-fallback a {
+    color: var(--saffron-dark);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 500;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+  }
+
+  .form-group input,
+  .form-group select {
+    border: 1px solid var(--ash-mid);
+    border-radius: 3px;
+    padding: 0.65rem 0.85rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus { border-color: var(--saffron); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.82rem;
+    color: var(--stone);
+    line-height: 1.5;
+  }
+
+  .checkbox-group input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: var(--saffron); }
+
   .btn-full {
     width: 100%;
     display: block;
@@ -930,51 +998,22 @@
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 1rem 1.5rem;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: background 0.2s;
   }
 
-  .btn-full:hover { background: var(--saffron); }
-
-  @media (max-width: 900px) {
-    nav { padding: 0 1.5rem; }
-    .nav-links { gap: 1rem; }
-    #home { grid-template-columns: 1fr; padding-top: 64px; }
-    .hero-right { min-height: 400px; }
-    section { padding: 4rem 1.5rem; }
-    .mission-grid { grid-template-columns: 1fr; gap: 3rem; }
-    .volunteer-grid { grid-template-columns: 1fr; }
-    .steps { grid-template-columns: 1fr; }
-    .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .step:last-child { border-bottom: none; }
-  }
-
-  @media (max-width: 600px) {
-    .nav-links { display: none; }
-    .hero-h1 { font-size: 2rem; }
-    .hero-sub { font-size: 1rem; }
-    .hero-stats { flex-direction: column; gap: 1.5rem; }
-    .perks-grid { grid-template-columns: 1fr; }
-    .action-gallery { grid-template-columns: 1fr; }
-  }
 </style>
 </head>
-
 <body>
 
 <!-- Navigation -->
 <nav>
-  <a href="#home" class="nav-logo">Path<span>finders</span></a>
+  <a href="#" class="nav-logo">Path<span>finders</span></a>
   <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
     <li><a href="#perks">Perks</a></li>
-    <li><a href="#in-action">Gallery</a></li>
+    <li><a href="#in-action">In Action</a></li>
     <li><a href="#mission">Mission</a></li>
     <li><a href="#model">How It Works</a></li>
-    <li><a href="#volunteer" class="nav-cta">Volunteer</a></li>
+    <li><a href="#volunteer" class="nav-cta">Get Started</a></li>
   </ul>
 </nav>
 
@@ -982,59 +1021,54 @@
 <section id="home">
   <div class="hero-grid-bg"></div>
   <div class="hero-left">
-    <div class="hero-eyebrow">— Community First</div>
-    <h1 class="hero-h1">
-      Make a real difference in <em>NYC's future</em>
-    </h1>
-    <p class="hero-sub">
-      Join <strong>Pathfinders</strong>, a youth-led volunteer program that's building stronger communities through mentorship, local service, and meaningful connections.
-    </p>
+    <div class="hero-eyebrow">Leadership Program</div>
+    <h1 class="hero-h1">Build your future as a <em>youth leader</em></h1>
+    <p class="hero-sub">Join <strong>Pathfinders NYC</strong> to develop skills, serve your community, and grow alongside peers who share your passion for making a difference.</p>
     <div class="hero-buttons">
-      <a href="#volunteer" class="btn-primary">Get Started</a>
-      <a href="#mission" class="btn-outline">Learn More</a>
+      <a href="#volunteer" class="btn-primary">Apply Now</a>
+      <a href="#in-action" class="btn-outline">See What We Do</a>
     </div>
     <div class="hero-stats">
       <div>
         <div class="hero-stat-num">500+</div>
-        <div class="hero-stat-label">Active Volunteers</div>
+        <div class="hero-stat-label">Youth Leaders</div>
       </div>
       <div>
-        <div class="hero-stat-num">50+</div>
-        <div class="hero-stat-label">Partner Orgs</div>
+        <div class="hero-stat-num">40K+</div>
+        <div class="hero-stat-label">Hours Volunteered</div>
       </div>
       <div>
-        <div class="hero-stat-num">2.5K</div>
-        <div class="hero-stat-label">Lives Impacted</div>
+        <div class="hero-stat-num">25+</div>
+        <div class="hero-stat-label">Community Projects</div>
       </div>
     </div>
   </div>
-
   <div class="hero-right">
     <div class="hero-map-art">
       <div class="photo-collage">
         <div class="collage-photo collage-main">
-          <svg viewBox="0 0 280 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <svg viewBox="0 0 280 360" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="280" height="360" fill="#E6F1F8"/>
-            <circle cx="140" cy="180" r="60" fill="#7BB3D9" opacity="0.3"/>
-            <text x="140" y="185" text-anchor="middle" font-size="14" fill="#4A8AB5">NYC Volunteers</text>
+            <circle cx="140" cy="100" r="60" fill="#7BB3D9" opacity="0.3"/>
+            <text x="140" y="200" font-size="16" text-anchor="middle" fill="#4A8AB5">Hero Image</text>
           </svg>
-          <div class="art-caption">Community Impact</div>
+          <div class="art-caption">Youth Leaders in Action</div>
         </div>
         <div class="collage-photo collage-small1">
-          <svg viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <svg viewBox="0 0 170 170" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="170" height="170" fill="#FCEBE0"/>
-            <circle cx="85" cy="85" r="40" fill="#F5B89E" opacity="0.3"/>
-            <text x="85" y="90" text-anchor="middle" font-size="12" fill="#E8826B">Service</text>
+            <circle cx="85" cy="85" r="50" fill="#F5B89E" opacity="0.3"/>
+            <text x="85" y="90" font-size="12" text-anchor="middle" fill="#E07B6F">Community</text>
           </svg>
-          <div class="art-caption">Youth-Led</div>
+          <div class="art-caption">Volunteering</div>
         </div>
         <div class="collage-photo collage-small2">
-          <svg viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <svg viewBox="0 0 170 170" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="170" height="170" fill="#FBF1DB"/>
-            <circle cx="85" cy="85" r="40" fill="#F5D89E" opacity="0.3"/>
-            <text x="85" y="90" text-anchor="middle" font-size="12" fill="#D4A856">Growth</text>
+            <circle cx="85" cy="85" r="50" fill="#F5D89E" opacity="0.3"/>
+            <text x="85" y="90" font-size="12" text-anchor="middle" fill="#8FB87E">Growth</text>
           </svg>
-          <div class="art-caption">Together</div>
+          <div class="art-caption">Leadership</div>
         </div>
       </div>
     </div>
@@ -1045,124 +1079,113 @@
 <section id="perks">
   <div class="perks-inner">
     <div class="perks-header">
-      <div class="section-label">Why Join</div>
-      <h2 class="section-h2">What You'll Gain</h2>
-      <p class="perks-sub">Beyond making an impact, you'll develop skills, build networks, and grow as a leader in your community.</p>
+      <span class="section-label">What You'll Gain</span>
+      <h2 class="section-h2">Perks of Joining Pathfinders</h2>
+      <p class="perks-sub">From professional development to community impact, discover the benefits of becoming a Pathfinder.</p>
     </div>
-
     <div class="perks-grid">
       <div class="perk-card perk-1">
-        <div class="perk-icon">🎯</div>
-        <h3>Real-World Impact</h3>
-        <p>Work on projects that directly benefit NYC neighborhoods and the people in them.</p>
+        <div class="perk-icon">🎓</div>
+        <h3>Leadership Training</h3>
+        <p>Comprehensive workshops on communication, decision-making, and team management.</p>
       </div>
       <div class="perk-card perk-2">
         <div class="perk-icon">🤝</div>
-        <h3>Mentorship</h3>
-        <p>Learn from experienced community leaders and professionals in your field of interest.</p>
+        <h3>Community Network</h3>
+        <p>Connect with 500+ young leaders across NYC and build lasting relationships.</p>
       </div>
       <div class="perk-card perk-3">
-        <div class="perk-icon">📚</div>
-        <h3>Skill Development</h3>
-        <p>Earn certifications, attend workshops, and build a portfolio that stands out.</p>
+        <div class="perk-icon">📈</div>
+        <h3>Career Growth</h3>
+        <p>Gain real-world experience that looks great on college and job applications.</p>
       </div>
       <div class="perk-card perk-4">
-        <div class="perk-icon">🌐</div>
-        <h3>Networking</h3>
-        <p>Connect with peers, leaders, and organizations across NYC's nonprofit ecosystem.</p>
+        <div class="perk-icon">🌍</div>
+        <h3>Real Impact</h3>
+        <p>Lead projects that directly benefit neighborhoods and communities across NYC.</p>
       </div>
       <div class="perk-card perk-5">
-        <div class="perk-icon">💡</div>
-        <h3>Leadership</h3>
-        <p>Lead your own initiatives and shape the direction of community projects.</p>
+        <div class="perk-icon">💼</div>
+        <h3>Professional Mentorship</h3>
+        <p>Learn from experienced professionals and community leaders in your field.</p>
       </div>
       <div class="perk-card perk-6">
-        <div class="perk-icon">🎓</div>
-        <h3>Career Support</h3>
-        <p>Get resume reviews, interview coaching, and job placement assistance.</p>
+        <div class="perk-icon">🎉</div>
+        <h3>Exclusive Events</h3>
+        <p>Attend networking events, workshops, and celebrations throughout the year.</p>
       </div>
     </div>
-
     <div class="perks-cta">
-      <a href="#volunteer" class="btn-primary">Start Your Journey</a>
-      <p>No experience necessary — just bring your passion and willingness to learn.</p>
+      <a href="#volunteer" class="btn-primary">Explore Opportunities</a>
+      <p>Applications open year-round. Apply anytime!</p>
     </div>
   </div>
 </section>
 
-<!-- Gallery Section -->
+<!-- In Action Gallery -->
 <section id="in-action">
   <div class="action-inner">
     <div class="action-header">
-      <div class="section-label">See It In Action</div>
-      <h2 class="section-h2">Recent Highlights</h2>
-      <p class="action-sub">From neighborhood cleanups to youth workshops, our volunteers are creating real change every day.</p>
+      <span class="section-label">Impact In Motion</span>
+      <h2 class="section-h2">Pathfinders in Action</h2>
+      <p class="action-sub">See the real work our youth leaders are doing across New York City to create positive change.</p>
     </div>
-
     <div class="action-gallery">
       <div class="gallery-item">
         <div class="gallery-photo">
-          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="400" height="300" fill="#E6F1F8"/>
             <circle cx="200" cy="150" r="80" fill="#7BB3D9" opacity="0.4"/>
-            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#4A8AB5">Cleanup Day</text>
           </svg>
-          <div class="gallery-label">June 2024</div>
+          <span class="gallery-label">Community Cleanup</span>
         </div>
         <div class="gallery-caption">
-          <h4>Community Cleanup Initiative</h4>
-          <p>50+ volunteers transformed Washington Square Park, removing waste and planting new greenery.</p>
+          <h4>Environmental Justice Initiative</h4>
+          <p>Our team organized a neighborhood cleanup that removed over 2 tons of debris and inspired 50+ community members to join.</p>
         </div>
       </div>
-
       <div class="gallery-item">
         <div class="gallery-photo">
-          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="400" height="300" fill="#FCEBE0"/>
             <circle cx="200" cy="150" r="80" fill="#F5B89E" opacity="0.4"/>
-            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#E8826B">Youth Workshop</text>
           </svg>
-          <div class="gallery-label">May 2024</div>
+          <span class="gallery-label">Youth Workshop</span>
         </div>
         <div class="gallery-caption">
-          <h4>Tech Skills Workshop</h4>
-          <p>75 high school students learned web design and coding from industry professionals.</p>
+          <h4>Financial Literacy Program</h4>
+          <p>Led workshops for 200+ high school students on budgeting, saving, and investing their first earnings.</p>
         </div>
       </div>
-
       <div class="gallery-item">
         <div class="gallery-photo">
-          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="400" height="300" fill="#FBF1DB"/>
             <circle cx="200" cy="150" r="80" fill="#F5D89E" opacity="0.4"/>
-            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#D4A856">Mentorship</text>
           </svg>
-          <div class="gallery-label">April 2024</div>
+          <span class="gallery-label">Mentorship</span>
         </div>
         <div class="gallery-caption">
-          <h4>Mentorship Mixer</h4>
-          <p>Connected 100+ youth with mentors across education, tech, nonprofit, and creative sectors.</p>
+          <h4>Youth Mentorship Circle</h4>
+          <p>Paired 100+ younger students with experienced youth leaders for one-on-one guidance and support.</p>
         </div>
       </div>
-
       <div class="gallery-item">
         <div class="gallery-photo">
-          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="400" height="300" fill="#EAF2E4"/>
             <circle cx="200" cy="150" r="80" fill="#8FB87E" opacity="0.4"/>
-            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#5F8A4B">Community</text>
           </svg>
-          <div class="gallery-label">March 2024</div>
+          <span class="gallery-label">Social Advocacy</span>
         </div>
         <div class="gallery-caption">
-          <h4>Food Bank Partnership</h4>
-          <p>Organized food drives across five NYC neighborhoods, helping 500+ families in need.</p>
+          <h4>Social Justice Campaign</h4>
+          <p>Organized a city-wide forum on equity, bringing together 300+ youth, educators, and policymakers.</p>
         </div>
       </div>
     </div>
-
     <div class="gallery-note">
-      <strong>All our volunteers are making an impact.</strong> Whether it's one event or a whole season of service, every contribution matters. Ready to be part of these stories?
+      <strong>2024 Impact Report:</strong> Pathfinders contributed 40,000+ volunteer hours, supported 25+ community projects, and trained 500+ emerging leaders across all five boroughs.
     </div>
   </div>
 </section>
@@ -1170,37 +1193,44 @@
 <!-- Mission Section -->
 <section id="mission">
   <div class="mission-inner">
+    <div class="mission-header" style="text-align: center; margin-bottom: 3rem;">
+      <span class="section-label" style="justify-content: center; display: inline-flex;">Our Values</span>
+      <h2 class="section-h2">What Drives Us</h2>
+    </div>
     <div class="mission-grid">
       <div class="mission-text">
-        <div class="section-label">Our Mission</div>
-        <h2 class="section-h2">Building Stronger Communities Through Youth Leadership</h2>
-        <p>At Pathfinders, we believe that young people have the power to drive meaningful change. Our program connects motivated volunteers with real opportunities to serve, learn, and lead in their neighborhoods.</p>
-        <p>We partner with <strong>nonprofits, local government, and community organizations</strong> to create projects that address actual community needs — not just check a box.</p>
-        
-        <div class="research-callout">
-          <div class="research-stat">92%</div>
-          <div class="research-text">
-            <strong>of our volunteers report gaining new skills and increased confidence</strong>
-            <span class="research-source">Pathfinders 2024 Impact Survey</span>
+        <p><strong>Pathfinders NYC</strong> believes that every young person has the potential to become a leader and changemaker in their community.</p>
+        <p>Our mission is to provide comprehensive leadership development and meaningful volunteer opportunities that empower youth to:</p>
+        <div class="mission-cards">
+          <div class="mission-card">
+            <div class="mission-card-icon">🔥</div>
+            <h3>Discover Their Purpose</h3>
+            <p>Explore your passions and find your voice as a young leader in NYC.</p>
+          </div>
+          <div class="mission-card">
+            <div class="mission-card-icon">🌱</div>
+            <h3>Build Essential Skills</h3>
+            <p>Master communication, collaboration, and critical thinking through hands-on experience.</p>
+          </div>
+          <div class="mission-card">
+            <div class="mission-card-icon">🎯</div>
+            <h3>Drive Real Change</h3>
+            <p>Lead projects that create tangible, positive impact in neighborhoods across the city.</p>
           </div>
         </div>
       </div>
-
-      <div class="mission-cards">
-        <div class="mission-card">
-          <div class="mission-card-icon">🎯</div>
-          <h3>For Youth</h3>
-          <p>Develop leadership skills, build your resume, and make friends who share your values while making real impact in your community.</p>
+      <div>
+        <div class="research-callout">
+          <div class="research-stat">75%</div>
+          <div class="research-text">
+            <strong>Of our alumni report increased confidence in leadership abilities</strong>
+            <span class="research-source">Source: Pathfinders NYC Impact Survey 2024</span>
+          </div>
         </div>
-        <div class="mission-card">
-          <div class="mission-card-icon">🤝</div>
-          <h3>For Organizations</h3>
-          <p>Access dedicated, trained volunteers who bring fresh energy and perspectives to your mission-driven work.</p>
-        </div>
-        <div class="mission-card">
-          <div class="mission-card-icon">🌟</div>
-          <h3>For NYC</h3>
-          <p>Strengthen neighborhoods through distributed youth engagement and community-centered problem solving.</p>
+        <div style="margin-top: 2rem;">
+          <p style="font-size: 1.05rem; color: var(--ink-mid); line-height: 1.8;">
+            By partnering with schools, nonprofits, and government agencies, we create pathways for youth to make meaningful contributions to their communities while building the skills and confidence they need to succeed.
+          </p>
         </div>
       </div>
     </div>
@@ -1210,150 +1240,145 @@
 <!-- How It Works Section -->
 <section id="model">
   <div class="model-inner">
-    <div class="section-label">Getting Started</div>
-    <h2 class="section-h2">How Pathfinders Works</h2>
-
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <span class="section-label">Our Process</span>
+      <h2 class="section-h2">How Pathfinders Works</h2>
+    </div>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-tag">Apply</div>
-        <h3>Tell Us About Yourself</h3>
-        <p>Share your interests, skills, and what kind of impact you want to make. We'll use this to match you with the perfect opportunity.</p>
+        <span class="step-tag">Application</span>
+        <h3>Apply</h3>
+        <p>Submit your application highlighting your interests, experience, and goals.</p>
         <div class="step-details">
-          <div class="step-detail">Quick 5-minute form</div>
-          <div class="step-detail">No experience required</div>
-          <div class="step-detail">Rolling admissions year-round</div>
+          <div class="step-detail">30-min application form</div>
+          <div class="step-detail">Essay on your leadership vision</div>
         </div>
       </div>
-
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-tag">Match</div>
-        <h3>Get Connected</h3>
-        <p>We'll pair you with a project or organization that matches your interests and schedule. You'll meet your team lead and get onboarded.</p>
+        <span class="step-tag">Interview</span>
+        <h3>Interview</h3>
+        <p>Meet with our team to discuss your fit and learn more about Pathfinders.</p>
         <div class="step-details">
-          <div class="step-detail">Flexible scheduling options</div>
-          <div class="step-detail">Multiple project types</div>
-          <div class="step-detail">Dedicated support coordinator</div>
+          <div class="step-detail">1-on-1 conversation</div>
+          <div class="step-detail">Learn about program tracks</div>
         </div>
       </div>
-
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-tag">Serve & Grow</div>
-        <h3>Make an Impact</h3>
-        <p>Do meaningful work, attend skill-building workshops, connect with other volunteers, and grow as a leader in your community.</p>
+        <span class="step-tag">Launch</span>
+        <h3>Get Started</h3>
+        <p>Join orientation, pick your projects, and begin your leadership journey.</p>
         <div class="step-details">
-          <div class="step-detail">Monthly skill workshops</div>
-          <div class="step-detail">Peer mentorship circles</div>
-          <div class="step-detail">Career coaching included</div>
+          <div class="step-detail">Onboarding & mentorship pairing</div>
+          <div class="step-detail">Choose your first project</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Volunteer CTA Section -->
+<!-- Volunteer Signup Section -->
 <section id="volunteer">
   <div class="volunteer-inner">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <span class="section-label">Ready to Lead?</span>
+      <h2 class="section-h2">Get Started Today</h2>
+    </div>
     <div class="volunteer-grid">
       <div class="volunteer-left">
-        <h3>Ready to Make a Difference?</h3>
-        <p>Join 500+ young people who are already creating real change in NYC. Whether you have a few hours a month or want to be deeply involved, there's a place for you here.</p>
-        
+        <h3>Join the Movement</h3>
+        <p>Whether you're looking to develop leadership skills, gain volunteer experience, or make a direct impact in your community, Pathfinders is here to support your journey.</p>
+        <p>Our program is designed for high school and early college students (ages 14–22) who are committed to personal growth and community service.</p>
         <div class="trust-badges">
           <div class="trust-badge">
             <div class="badge-dot"></div>
-            <span>Application reviewed within 48 hours</span>
+            <span>No prior experience necessary</span>
           </div>
           <div class="trust-badge">
             <div class="badge-dot"></div>
-            <span>Full background check & safety training provided</span>
+            <span>Flexible hours that work with school</span>
           </div>
           <div class="trust-badge">
             <div class="badge-dot"></div>
-            <span>Flexible, year-round opportunities</span>
+            <span>Supportive community of peers</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span>Professional mentorship included</span>
           </div>
         </div>
       </div>
-
       <div class="signup-form-card">
-        <h3>Start Your Journey</h3>
-        <p class="form-sub">Fill out this quick form to get started. We'll review your application and connect you with an opportunity within 48 hours.</p>
-        
-        <form>
+        <h3>Apply Now</h3>
+        <p class="form-sub">Fill out the form below to apply to Pathfinders NYC. We review applications on a rolling basis!</p>
+        <!-- Embedded form (placeholder for demonstration) -->
+        <form onsubmit="return handleFormSubmit(event);">
           <div class="form-group">
-            <label for="fullname">Full Name *</label>
-            <input type="text" id="fullname" name="fullname" required>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
           </div>
-
-          <div class="form-group">
-            <label for="email">Email *</label>
-            <input type="email" id="email" name="email" required>
-          </div>
-
           <div class="form-row">
             <div class="form-group">
-              <label for="age">Age *</label>
-              <select id="age" name="age" required>
-                <option value="">Select age</option>
-                <option value="13-15">13-15</option>
-                <option value="16-18">16-18</option>
-                <option value="19-24">19-24</option>
-                <option value="25+">25+</option>
-              </select>
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-              <label for="zip">ZIP Code *</label>
-              <input type="text" id="zip" name="zip" placeholder="e.g., 10001" required>
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" required>
             </div>
           </div>
-
           <div class="form-group">
-            <label for="interests">What are you interested in? *</label>
+            <label for="age">Age</label>
+            <select id="age" name="age" required>
+              <option value="">Select your age</option>
+              <option value="14-16">14–16</option>
+              <option value="17-19">17–19</option>
+              <option value="20-22">20–22</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="school">School/College</label>
+            <input type="text" id="school" name="school" placeholder="Name of your institution">
+          </div>
+          <div class="form-group">
+            <label for="interests">What interests you most about Pathfinders?</label>
             <select id="interests" name="interests" required>
-              <option value="">Select an area</option>
-              <option value="education">Education & Tutoring</option>
-              <option value="environment">Environment & Sustainability</option>
-              <option value="tech">Tech & Innovation</option>
-              <option value="health">Health & Wellness</option>
-              <option value="social">Social Justice</option>
-              <option value="arts">Arts & Culture</option>
-              <option value="other">Other</option>
+              <option value="">Select an option</option>
+              <option value="leadership">Leadership Development</option>
+              <option value="community">Community Service</option>
+              <option value="skills">Building Skills</option>
+              <option value="network">Networking & Community</option>
             </select>
           </div>
-
-          <div class="form-group">
-            <label for="hours">How many hours per month? *</label>
-            <select id="hours" name="hours" required>
-              <option value="">Select availability</option>
-              <option value="1-4">1-4 hours</option>
-              <option value="5-10">5-10 hours</option>
-              <option value="10-20">10-20 hours</option>
-              <option value="20+">20+ hours</option>
-            </select>
-          </div>
-
-          <div class="checkbox-group">
-            <input type="checkbox" id="newsletter" name="newsletter">
-            <label for="newsletter">Keep me updated on opportunities and events</label>
-          </div>
-
           <div class="checkbox-group">
             <input type="checkbox" id="terms" name="terms" required>
-            <label for="terms">I agree to the terms and code of conduct *</label>
+            <label for="terms" style="margin: 0;">I agree to the program terms and conditions and confirm I'm ages 14–22.</label>
           </div>
-
-          <button type="submit" class="btn-full">Apply to Volunteer</button>
+          <button type="submit" class="btn-full">Submit Application</button>
         </form>
-
         <div class="iframe-fallback">
-          Have questions? <a href="mailto:hello@pathfindersnycorg">Contact us</a>
+          Can't see the form? <a href="https://example.com/apply">Apply here</a>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Footer -->
+<footer style="background: var(--ink); color: var(--white); padding: 3rem 4rem; text-align: center; font-size: 0.9rem;">
+  <p>© 2024 Pathfinders NYC. All rights reserved. | <a href="#" style="color: var(--saffron); text-decoration: none;">Privacy Policy</a> | <a href="#" style="color: var(--saffron); text-decoration: none;">Contact Us</a></p>
+</footer>
+
+<script>
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    alert('Thank you for your interest! We will review your application soon.');
+    event.target.reset();
+    return false;
+  }
+</script>
 
 </body>
 </html>
