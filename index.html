@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pathfinders NYC — Youth Volunteer Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Primary: baby blue — soft, friendly, optimistic */
+    --saffron: #7BB3D9;
+    --saffron-light: #E6F1F8;
+    --saffron-dark: #4A8AB5;
+    /* Secondary: warm peach — adds warmth so it isn't cold */
+    --coral: #F5B89E;
+    --coral-light: #FCEBE0;
+    /* Tertiary: butter yellow — sunny accent */
+    --sky: #F5D89E;
+    --sky-light: #FBF1DB;
+    /* Neutrals: warm cream + soft navy */
+    --ink: #2C3A48;
+    --ink-mid: #4A5968;
+    --ash: #F7F4EE;
+    --ash-mid: #EDE5D8;
+    --stone: #9CA7B0;
+    --white: #FDFAF4;
+    --red: #E07B6F;
+    --green: #8FB87E;
+    --green-light: #EAF2E4;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Anchor scroll offset so links don't hide under fixed nav */
+  section[id] { scroll-margin-top: 80px; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 64px;
+    background: var(--ink);
+    border-bottom: 2px solid var(--saffron);
+  }
+
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.45rem;
+    letter-spacing: -0.01em;
+    color: var(--saffron);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--white); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--saffron); }
+
+  .nav-cta {
+    background: var(--saffron) !important;
+    color: var(--white) !important;
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 2px !important;
+    font-weight: 700 !important;
+  }
+
+  .nav-cta:hover { background: var(--saffron-dark) !important; color: var(--white) !important; }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2C3A48 0%, #3F5266 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #home::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,179,217,0.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(123,179,217,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,179,217,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem 3rem 5rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--saffron);
+  }
+
+  .hero-h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--saffron);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--ash-mid);
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-sub strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--saffron);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover { background: var(--saffron-dark); color: var(--white); transform: translateY(-1px); }
+
+  .btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--white);
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 2px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-outline:hover { border-color: var(--saffron); color: var(--saffron); }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .hero-stat-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2.1rem;
+    color: var(--saffron);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-top: 0.25rem;
+  }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-map-art {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .photo-collage {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 520px;
+  }
+
+  .collage-photo {
+    position: absolute;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.3);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    background: var(--white);
+  }
+
+  .collage-photo:hover {
+    transform: rotate(0deg) translateY(-6px) !important;
+    box-shadow: 0 22px 60px rgba(0,0,0,0.35);
+  }
+
+  .collage-main {
+    width: 280px;
+    height: 360px;
+    left: 20px;
+    top: 30px;
+    transform: rotate(-3deg);
+    z-index: 1;
+  }
+
+  .collage-small1 {
+    width: 170px;
+    height: 170px;
+    right: 0;
+    top: 60px;
+    transform: rotate(5deg);
+    z-index: 2;
+  }
+
+  .collage-small2 {
+    width: 170px;
+    height: 170px;
+    right: 15px;
+    bottom: 30px;
+    transform: rotate(-4deg);
+    z-index: 2;
+  }
+
+  .collage-photo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .art-caption {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink-mid);
+    background: rgba(255,255,255,0.95);
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+    text-align: center;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 6rem 4rem; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--saffron-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--saffron);
+  }
+
+  .section-h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── PERKS ── */
+  #perks {
+    background: var(--ash);
+    padding: 6rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #perks::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: var(--saffron-light);
+    opacity: 0.7;
+    z-index: 0;
+  }
+
+  #perks::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: var(--coral-light);
+    opacity: 0.8;
+    z-index: 0;
+  }
+
+  .perks-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .perks-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .perks-header .section-label {
+    justify-content: center;
+    display: inline-flex;
+  }
+
+  .perks-sub {
+    font-size: 1.1rem;
+    color: var(--ink-mid);
+    max-width: 540px;
+    margin: 1rem auto 0;
+    line-height: 1.6;
+  }
+
+  .perks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .perk-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.75rem 1.5rem;
+    border: 1px solid var(--ash-mid);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .perk-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  }
+
+  .perk-1:hover { border-color: var(--saffron); }
+  .perk-2:hover { border-color: var(--coral); }
+  .perk-3:hover { border-color: var(--sky); }
+  .perk-4:hover { border-color: var(--saffron); }
+  .perk-5:hover { border-color: var(--coral); }
+  .perk-6:hover { border-color: var(--sky); }
+
+  .perk-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    background: var(--saffron-light);
+    border-radius: 12px;
+  }
+
+  .perk-2 .perk-icon { background: var(--coral-light); }
+  .perk-3 .perk-icon { background: var(--sky-light); }
+  .perk-4 .perk-icon { background: var(--saffron-light); }
+  .perk-5 .perk-icon { background: var(--coral-light); }
+  .perk-6 .perk-icon { background: var(--sky-light); }
+
+  .perk-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.22rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .perk-card p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+  }
+
+  .perks-cta {
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .perks-cta p {
+    font-size: 0.9rem;
+    color: var(--stone);
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 800px) {
+    .perks-grid { grid-template-columns: 1fr; }
+    #perks { padding: 4rem 1.5rem; }
+  }
+
+  /* ── IN ACTION GALLERY ── */
+  #in-action {
+    background: var(--white);
+    padding: 6rem 4rem;
+  }
+
+  .action-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .action-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .action-header .section-label {
+    justify-content: center;
+    display: inline-flex;
+  }
+
+  .action-sub {
+    font-size: 1.05rem;
+    color: var(--ink-mid);
+    max-width: 580px;
+    margin: 1rem auto 0;
+    line-height: 1.7;
+  }
+
+  .action-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem 2rem;
+  }
+
+  .gallery-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .gallery-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: var(--ash);
+    box-shadow: 0 8px 24px rgba(44,58,72,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .gallery-photo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(44,58,72,0.14);
+  }
+
+  .gallery-photo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .gallery-label {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(255,255,255,0.94);
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: var(--ink-mid);
+    letter-spacing: 0.04em;
+  }
+
+  .gallery-caption h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .gallery-caption p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+  }
+
+  .gallery-note {
+    margin-top: 3rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--saffron-light);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+    text-align: center;
+    border: 1px solid rgba(123,179,217,0.25);
+  }
+
+  .gallery-note strong { color: var(--saffron-dark); }
+
+  .gallery-note a {
+    color: var(--saffron-dark);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @media (max-width: 800px) {
+    #in-action { padding: 4rem 1.5rem; }
+    .action-gallery { grid-template-columns: 1fr; }
+  }
+
+  /* ── MISSION ── */
+  #mission {
+    background: var(--white);
+    padding: 6rem 4rem;
+  }
+
+  .mission-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    margin-top: 3rem;
+  }
+
+  .mission-text p {
+    color: var(--ink-mid);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+
+  .mission-text p strong { color: var(--ink); font-weight: 600; }
+
+  .mission-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .mission-card {
+    padding: 1.75rem;
+    border-left: 4px solid var(--saffron);
+    background: var(--ash);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .mission-cards .mission-card:nth-child(2) {
+    border-left-color: var(--coral);
+  }
+
+  .mission-cards .mission-card:nth-child(3) {
+    border-left-color: var(--sky);
+  }
+
+  .mission-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .mission-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.28rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .mission-card p {
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+
+  /* ── RESEARCH CALLOUT ── */
+  .research-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background: var(--blue-light, var(--saffron-light));
+    border-left: 4px solid var(--saffron);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .research-stat {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 3rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--saffron-dark);
+    flex-shrink: 0;
+  }
+
+  .research-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-mid);
+  }
+
+  .research-text strong {
+    color: var(--ink);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .research-source {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--stone);
+    font-style: italic;
+  }
+
+  /* ── HOW IT WORKS ── */
+  #model {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .model-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .model-inner .section-label { color: var(--saffron); }
+  .model-inner .section-h2 { color: var(--white); }
+
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    margin-top: 3.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .step {
+    padding: 2.5rem;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+  }
+
+  .step:last-child { border-right: none; }
+
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 3.8rem;
+    line-height: 1;
+    color: rgba(123,179,217,0.35);
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .step-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    background: rgba(123,179,217,0.15);
+    padding: 0.3rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1.25rem;
+  }
+
+  .step h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.55rem;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  .step p {
+    font-size: 0.92rem;
+    color: var(--stone);
+    line-height: 1.7;
+  }
+
+  .step-details {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .step-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--ash-mid);
+  }
+
+  .step-detail::before {
+    content: '→';
+    color: var(--saffron);
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* ── VOLUNTEER ── */
+  #volunteer {
+    background: var(--ash);
+  }
+
+  .volunteer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .volunteer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+  }
+
+  .volunteer-left h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .volunteer-left p {
+    color: var(--ink-mid);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+  }
+
+  .trust-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--white);
+    border: 1px solid var(--ash-mid);
+    border-radius: 4px;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.88rem;
+    color: var(--ink-mid);
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .signup-form-card {
+    background: var(--white);
+    border: 1px solid var(--ash-mid);
+    border-radius: 6px;
+    padding: 2.25rem;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+  }
+
+  .signup-form-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .signup-form-card p.form-sub {
+    font-size: 0.85rem;
+    color: var(--stone);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .btn-full {
+    width: 100%;
+    display: block;
+    text-align: center;
+    background: var(--ink);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-full:hover { background: var(--saffron); }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { gap: 1rem; }
+    #home { grid-template-columns: 1fr; padding-top: 64px; }
+    .hero-right { min-height: 400px; }
+    section { padding: 4rem 1.5rem; }
+    .mission-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .volunteer-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .step:last-child { border-bottom: none; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .hero-h1 { font-size: 2rem; }
+    .hero-sub { font-size: 1rem; }
+    .hero-stats { flex-direction: column; gap: 1.5rem; }
+    .perks-grid { grid-template-columns: 1fr; }
+    .action-gallery { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="#home" class="nav-logo">Path<span>finders</span></a>
+  <ul class="nav-links">
+    <li><a href="#perks">Perks</a></li>
+    <li><a href="#in-action">Gallery</a></li>
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#model">How It Works</a></li>
+    <li><a href="#volunteer" class="nav-cta">Volunteer</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section id="home">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">— Community First</div>
+    <h1 class="hero-h1">
+      Make a real difference in <em>NYC's future</em>
+    </h1>
+    <p class="hero-sub">
+      Join <strong>Pathfinders</strong>, a youth-led volunteer program that's building stronger communities through mentorship, local service, and meaningful connections.
+    </p>
+    <div class="hero-buttons">
+      <a href="#volunteer" class="btn-primary">Get Started</a>
+      <a href="#mission" class="btn-outline">Learn More</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">500+</div>
+        <div class="hero-stat-label">Active Volunteers</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">50+</div>
+        <div class="hero-stat-label">Partner Orgs</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">2.5K</div>
+        <div class="hero-stat-label">Lives Impacted</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-map-art">
+      <div class="photo-collage">
+        <div class="collage-photo collage-main">
+          <svg viewBox="0 0 280 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <rect width="280" height="360" fill="#E6F1F8"/>
+            <circle cx="140" cy="180" r="60" fill="#7BB3D9" opacity="0.3"/>
+            <text x="140" y="185" text-anchor="middle" font-size="14" fill="#4A8AB5">NYC Volunteers</text>
+          </svg>
+          <div class="art-caption">Community Impact</div>
+        </div>
+        <div class="collage-photo collage-small1">
+          <svg viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <rect width="170" height="170" fill="#FCEBE0"/>
+            <circle cx="85" cy="85" r="40" fill="#F5B89E" opacity="0.3"/>
+            <text x="85" y="90" text-anchor="middle" font-size="12" fill="#E8826B">Service</text>
+          </svg>
+          <div class="art-caption">Youth-Led</div>
+        </div>
+        <div class="collage-photo collage-small2">
+          <svg viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <rect width="170" height="170" fill="#FBF1DB"/>
+            <circle cx="85" cy="85" r="40" fill="#F5D89E" opacity="0.3"/>
+            <text x="85" y="90" text-anchor="middle" font-size="12" fill="#D4A856">Growth</text>
+          </svg>
+          <div class="art-caption">Together</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Perks Section -->
+<section id="perks">
+  <div class="perks-inner">
+    <div class="perks-header">
+      <div class="section-label">Why Join</div>
+      <h2 class="section-h2">What You'll Gain</h2>
+      <p class="perks-sub">Beyond making an impact, you'll develop skills, build networks, and grow as a leader in your community.</p>
+    </div>
+
+    <div class="perks-grid">
+      <div class="perk-card perk-1">
+        <div class="perk-icon">🎯</div>
+        <h3>Real-World Impact</h3>
+        <p>Work on projects that directly benefit NYC neighborhoods and the people in them.</p>
+      </div>
+      <div class="perk-card perk-2">
+        <div class="perk-icon">🤝</div>
+        <h3>Mentorship</h3>
+        <p>Learn from experienced community leaders and professionals in your field of interest.</p>
+      </div>
+      <div class="perk-card perk-3">
+        <div class="perk-icon">📚</div>
+        <h3>Skill Development</h3>
+        <p>Earn certifications, attend workshops, and build a portfolio that stands out.</p>
+      </div>
+      <div class="perk-card perk-4">
+        <div class="perk-icon">🌐</div>
+        <h3>Networking</h3>
+        <p>Connect with peers, leaders, and organizations across NYC's nonprofit ecosystem.</p>
+      </div>
+      <div class="perk-card perk-5">
+        <div class="perk-icon">💡</div>
+        <h3>Leadership</h3>
+        <p>Lead your own initiatives and shape the direction of community projects.</p>
+      </div>
+      <div class="perk-card perk-6">
+        <div class="perk-icon">🎓</div>
+        <h3>Career Support</h3>
+        <p>Get resume reviews, interview coaching, and job placement assistance.</p>
+      </div>
+    </div>
+
+    <div class="perks-cta">
+      <a href="#volunteer" class="btn-primary">Start Your Journey</a>
+      <p>No experience necessary — just bring your passion and willingness to learn.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Section -->
+<section id="in-action">
+  <div class="action-inner">
+    <div class="action-header">
+      <div class="section-label">See It In Action</div>
+      <h2 class="section-h2">Recent Highlights</h2>
+      <p class="action-sub">From neighborhood cleanups to youth workshops, our volunteers are creating real change every day.</p>
+    </div>
+
+    <div class="action-gallery">
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#E6F1F8"/>
+            <circle cx="200" cy="150" r="80" fill="#7BB3D9" opacity="0.4"/>
+            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#4A8AB5">Cleanup Day</text>
+          </svg>
+          <div class="gallery-label">June 2024</div>
+        </div>
+        <div class="gallery-caption">
+          <h4>Community Cleanup Initiative</h4>
+          <p>50+ volunteers transformed Washington Square Park, removing waste and planting new greenery.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#FCEBE0"/>
+            <circle cx="200" cy="150" r="80" fill="#F5B89E" opacity="0.4"/>
+            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#E8826B">Youth Workshop</text>
+          </svg>
+          <div class="gallery-label">May 2024</div>
+        </div>
+        <div class="gallery-caption">
+          <h4>Tech Skills Workshop</h4>
+          <p>75 high school students learned web design and coding from industry professionals.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#FBF1DB"/>
+            <circle cx="200" cy="150" r="80" fill="#F5D89E" opacity="0.4"/>
+            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#D4A856">Mentorship</text>
+          </svg>
+          <div class="gallery-label">April 2024</div>
+        </div>
+        <div class="gallery-caption">
+          <h4>Mentorship Mixer</h4>
+          <p>Connected 100+ youth with mentors across education, tech, nonprofit, and creative sectors.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-photo">
+          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#EAF2E4"/>
+            <circle cx="200" cy="150" r="80" fill="#8FB87E" opacity="0.4"/>
+            <text x="200" y="155" text-anchor="middle" font-size="16" fill="#5F8A4B">Community</text>
+          </svg>
+          <div class="gallery-label">March 2024</div>
+        </div>
+        <div class="gallery-caption">
+          <h4>Food Bank Partnership</h4>
+          <p>Organized food drives across five NYC neighborhoods, helping 500+ families in need.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gallery-note">
+      <strong>All our volunteers are making an impact.</strong> Whether it's one event or a whole season of service, every contribution matters. Ready to be part of these stories?
+    </div>
+  </div>
+</section>
+
+<!-- Mission Section -->
+<section id="mission">
+  <div class="mission-inner">
+    <div class="mission-grid">
+      <div class="mission-text">
+        <div class="section-label">Our Mission</div>
+        <h2 class="section-h2">Building Stronger Communities Through Youth Leadership</h2>
+        <p>At Pathfinders, we believe that young people have the power to drive meaningful change. Our program connects motivated volunteers with real opportunities to serve, learn, and lead in their neighborhoods.</p>
+        <p>We partner with <strong>nonprofits, local government, and community organizations</strong> to create projects that address actual community needs — not just check a box.</p>
+        
+        <div class="research-callout">
+          <div class="research-stat">92%</div>
+          <div class="research-text">
+            <strong>of our volunteers report gaining new skills and increased confidence</strong>
+            <span class="research-source">Pathfinders 2024 Impact Survey</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-cards">
+        <div class="mission-card">
+          <div class="mission-card-icon">🎯</div>
+          <h3>For Youth</h3>
+          <p>Develop leadership skills, build your resume, and make friends who share your values while making real impact in your community.</p>
+        </div>
+        <div class="mission-card">
+          <div class="mission-card-icon">🤝</div>
+          <h3>For Organizations</h3>
+          <p>Access dedicated, trained volunteers who bring fresh energy and perspectives to your mission-driven work.</p>
+        </div>
+        <div class="mission-card">
+          <div class="mission-card-icon">🌟</div>
+          <h3>For NYC</h3>
+          <p>Strengthen neighborhoods through distributed youth engagement and community-centered problem solving.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="model">
+  <div class="model-inner">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-h2">How Pathfinders Works</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-tag">Apply</div>
+        <h3>Tell Us About Yourself</h3>
+        <p>Share your interests, skills, and what kind of impact you want to make. We'll use this to match you with the perfect opportunity.</p>
+        <div class="step-details">
+          <div class="step-detail">Quick 5-minute form</div>
+          <div class="step-detail">No experience required</div>
+          <div class="step-detail">Rolling admissions year-round</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-tag">Match</div>
+        <h3>Get Connected</h3>
+        <p>We'll pair you with a project or organization that matches your interests and schedule. You'll meet your team lead and get onboarded.</p>
+        <div class="step-details">
+          <div class="step-detail">Flexible scheduling options</div>
+          <div class="step-detail">Multiple project types</div>
+          <div class="step-detail">Dedicated support coordinator</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-tag">Serve & Grow</div>
+        <h3>Make an Impact</h3>
+        <p>Do meaningful work, attend skill-building workshops, connect with other volunteers, and grow as a leader in your community.</p>
+        <div class="step-details">
+          <div class="step-detail">Monthly skill workshops</div>
+          <div class="step-detail">Peer mentorship circles</div>
+          <div class="step-detail">Career coaching included</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Volunteer CTA Section -->
+<section id="volunteer">
+  <div class="volunteer-inner">
+    <div class="volunteer-grid">
+      <div class="volunteer-left">
+        <h3>Ready to Make a Difference?</h3>
+        <p>Join 500+ young people who are already creating real change in NYC. Whether you have a few hours a month or want to be deeply involved, there's a place for you here.</p>
+        
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span>Application reviewed within 48 hours</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span>Full background check & safety training provided</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-dot"></div>
+            <span>Flexible, year-round opportunities</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="signup-form-card">
+        <h3>Start Your Journey</h3>
+        <p class="form-sub">Fill out this quick form to get started. We'll review your application and connect you with an opportunity within 48 hours.</p>
+        
+        <form>
+          <div class="form-group">
+            <label for="fullname">Full Name *</label>
+            <input type="text" id="fullname" name="fullname" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="age">Age *</label>
+              <select id="age" name="age" required>
+                <option value="">Select age</option>
+                <option value="13-15">13-15</option>
+                <option value="16-18">16-18</option>
+                <option value="19-24">19-24</option>
+                <option value="25+">25+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="zip">ZIP Code *</label>
+              <input type="text" id="zip" name="zip" placeholder="e.g., 10001" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="interests">What are you interested in? *</label>
+            <select id="interests" name="interests" required>
+              <option value="">Select an area</option>
+              <option value="education">Education & Tutoring</option>
+              <option value="environment">Environment & Sustainability</option>
+              <option value="tech">Tech & Innovation</option>
+              <option value="health">Health & Wellness</option>
+              <option value="social">Social Justice</option>
+              <option value="arts">Arts & Culture</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="hours">How many hours per month? *</label>
+            <select id="hours" name="hours" required>
+              <option value="">Select availability</option>
+              <option value="1-4">1-4 hours</option>
+              <option value="5-10">5-10 hours</option>
+              <option value="10-20">10-20 hours</option>
+              <option value="20+">20+ hours</option>
+            </select>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="newsletter" name="newsletter">
+            <label for="newsletter">Keep me updated on opportunities and events</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" name="terms" required>
+            <label for="terms">I agree to the terms and code of conduct *</label>
+          </div>
+
+          <button type="submit" class="btn-full">Apply to Volunteer</button>
+        </form>
+
+        <div class="iframe-fallback">
+          Have questions? <a href="mailto:hello@pathfindersnycorg">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
